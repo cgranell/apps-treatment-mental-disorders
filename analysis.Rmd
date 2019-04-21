@@ -1,0 +1,108 @@
+---
+title: 'Analysis and visualisations for "Smartphone apps for the treatment of mental disorders: a systematic review"'
+author: "Carlos Granell et al."
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+urlcolor: blue    
+---
+
+## License
+
+This document is licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/).
+
+All contained code is licensed under the [Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/).
+
+The data used is licensed under a [Open Data Commons Attribution License](https://opendatacommons.org/licenses/by/).
+
+See the paper's "Author Contributions" section for details on the contributors of data files.
+
+\newpage
+
+
+## Metadata
+
+Required libraries and runtime environment description.
+
+```{r load_libraries, echo=FALSE, message=FALSE, warning=FALSE}
+library(here)
+library(tidyverse)
+library(tidytext)
+library(kableExtra)
+library(scales)
+library(RColorBrewer)
+library(gridExtra)
+library(forcats)
+library(purrr)
+library(cowplot)    # publication-ready theme for ggplot2
+
+```
+
+
+```{r session_info, echo=FALSE}
+devtools::session_info(include_base = TRUE)
+```
+
+This document is versioned in a public [git](https://git-scm.com/) repo: [https://github.com/cgranell/apps-treatment-mental-disorders](https://github.com/cgranell/apps-treatment-mental-disorders).
+
+\newpage
+
+This R notebook contains the code to produce the final figures and tables of the paper. 
+
+## Data 
+
+```{r all_data, echo=FALSE}
+load(file = here("all_data.rda"))
+
+# all_data <-
+#     all_data %>%
+#     select(-id_loc, -md_mul, -md_sub, -fmw_cbt, -fmw_hum, -fmw_sys, -fmw_psy, -fmw_wav, -fmw_tra, -fmw_pos, -val_ed, -val_ass, 
+#            -assessmenttypeid, -id_co, -os_ios, -os_and, -type, -md_dsm5) 
+
+#save(all_data, file = here("all_data.rda"))
+#write.csv(all_data, file = here("all_data.csv"))
+
+n_papers = nrow(all_data)
+ncol(all_data)
+```
+The final number of surveyed papers is `` `r n_papers` ``. For each paper, we have extracted `` `r ncol(all_data)` `` items.
+
+
+```{r md_ordered, echo=FALSE}
+
+```
+
+
+## Figure 2. Temporal distribution of papers per assessment type
+
+Temporal distribution of papers colored by assessment type. It is a proportional stacked area chart in which the sum of each year is always equal to hundred, and the value of each group (assessment type) is in percentages.
+
+\newpage
+
+## Figure 3. Distribution of papers per mental disorder and assessment type
+
+Proportional (stacked) barchart: Distribution of papers per mental disorders, colored by assessment type. Note that we draw two main colors in the legend: purple represents no assessment at all, the range of greens denotes distinct types of assessment. Total percentatge per mental disorder is given at the end of each bar (white circle).
+
+\newpage
+
+
+## Figure 4. Distribution top mental disorders per year
+
+Linechart: Distribution of papers (top6 mental disorders) per year.
+
+
+### Table 1. Distribution of apps per mental disorder
+
+_Compact_ distribution of papers (apps) per mental disorder, grouping the references per app. The number(s) in brackets next to the app name is the reference(s) in which the app is mentioned. In the table below, these references are internal identifiers instead. "NA" means the app name is not available / is not mentioned in the paper. 
+
+\newpage
+
+
+## Figure 5. Distribution of papers per mental disorder vs technology
+
+Bubble plot: Distribution of papers per mental disorder and technology characteristics grouped by dimensions (software features, sensor capabilities, and type of analysis). Technology-related characteristics are ranked in each dimension.
+
+
+
