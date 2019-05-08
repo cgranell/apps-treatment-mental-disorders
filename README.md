@@ -10,6 +10,8 @@ Click the "Binder" button below to open the notebook on [binder.org](https://myb
 
 In the RStudio page, open the file `analysis.Rmd`, the _main analysis file_. Then select "Knit > Knit to HTML" to render the document, which includes the complete analysis workflow, and display it in your browser. 
 
+Alternatively, click on the file  `analysis.html`, the results of the analysis, and select `View in Web Browser` to display it. 
+
 ## Reproduce locally
 
 Open the main analysis file `analysis.Rmd` with RStudio. Then select "Knit > Knit to HTML" to render the document. If you have errors rendering it, try running each chunk to locate the problem.
