@@ -6,6 +6,8 @@ R Markdown notebook for the paper "Smartphone apps for the treatment of mental d
 
 Click the "Binder" button below to open the notebook on [binder.org](https://mybinder.org/).
 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/cgranell/apps-treatment-mental-disorders/b7e167424578ce5bb1a14ff7fc3ce18124a16190?urlpath=https%3A%2F%2Fraw.githubusercontent.com%2Fcgranell%2Fapps-treatment-mental-disorders%2Fmaster%2Fanalysis.Rmd)
+
 On the Jupyter page that opens, select "New > RStudio".
 
 In RStudio, open the file `analysis.Rmd`, the _main analysis file_. Then select "Knit > Knit to HTML" to render the document, which includes the complete analysis workflow, and display it in your browser. 
