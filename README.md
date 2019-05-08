@@ -8,8 +8,6 @@ Click the "Binder" button below to open the notebook on [binder.org](https://myb
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/cgranell/apps-treatment-mental-disorders/b7e167424578ce5bb1a14ff7fc3ce18124a16190?urlpath=rstudio)
 
-https://mybinder.org/v2/gh/nuest/reproducible-research-and-giscience/6
-
 In the RStudio page, open the file `analysis.Rmd`, the _main analysis file_. Then select "Knit > Knit to HTML" to render the document, which includes the complete analysis workflow, and display it in your browser. 
 
 ## Reproduce locally
