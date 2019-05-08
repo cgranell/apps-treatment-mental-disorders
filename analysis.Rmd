@@ -1,6 +1,6 @@
 ---
 title: 'Analysis and visualisations for "Smartphone apps for the treatment of mental disorders: a systematic review"'
-author: "Carlos Granell et al."
+author: "Carlos Granell, Juana Bretón-López, Sven Casteleyn, Diana Castilla, Laura Díaz, Adriana Mira, Ignacio Miralles, William Van Woensel"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
@@ -13,7 +13,7 @@ urlcolor: blue
 
 This document is licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/).
 
-All contained code is licensed under the [Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/).
+The code is licensed under the [Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/).
 
 The data used is licensed under a [Open Data Commons Attribution License](https://opendatacommons.org/licenses/by/).
 
@@ -29,14 +29,15 @@ Required libraries and runtime environment description.
 ```{r load_libraries, echo=FALSE, message=FALSE, warning=FALSE}
 library(here)
 library(tidyverse)
-library(tidytext)
+library(cowplot)    # publication-ready theme for ggplot2
 library(kableExtra)
-library(scales)
-library(RColorBrewer)
-library(gridExtra)
 library(forcats)
 library(purrr)
-library(cowplot)    # publication-ready theme for ggplot2
+library(scales)
+
+# library(tidytext)
+# library(RColorBrewer)
+# library(gridExtra)
 
 ```
 
@@ -56,53 +57,683 @@ This R notebook contains the code to produce the final figures and tables of the
 ```{r all_data, echo=FALSE}
 load(file = here("all_data.rda"))
 
-# all_data <-
-#     all_data %>%
-#     select(-id_loc, -md_mul, -md_sub, -fmw_cbt, -fmw_hum, -fmw_sys, -fmw_psy, -fmw_wav, -fmw_tra, -fmw_pos, -val_ed, -val_ass, 
-#            -assessmenttypeid, -id_co, -os_ios, -os_and, -type, -md_dsm5) 
+#' Replace existing factors levels
+levels(all_data$val_asstype)[levels(all_data$val_asstype)=="EFFECT AND USABILITY/USER EXPERIENCE"] <- "EFFECT AND USABILITY/UX"
+levels(all_data$val_asstype)[levels(all_data$val_asstype)=="USABILITY/USER EXPERIENCE"] <- "USABILITY/UX"
 
-#save(all_data, file = here("all_data.rda"))
-#write.csv(all_data, file = here("all_data.csv"))
+```
 
+## Descriptive statistics
+
+```{r stats, echo=FALSE}
+n_md <- nlevels(all_data$md)
 n_papers = nrow(all_data)
-ncol(all_data)
+
+n_assessment_no <- nrow(filter(all_data, val_asstype == "NO ASSESSMENT"))
+n_assessment_yes <- n_papers - n_assessment_no
+
+n_assessment_effect <- nrow(filter(all_data, val_asstype=="EFFECT"))
+n_assessment_effectux <-nrow(filter(all_data, val_asstype=="EFFECT AND USABILITY/UX"))
+n_assessment_ux <-nrow(filter(all_data, val_asstype=="USABILITY/UX"))
+
+
+# Keep the same order of mental disorder for all charts 
+temp_for_order <- 
+    all_data %>% 
+    group_by(md_id, md_desc) %>%
+    summarise(number_cases = n()) %>%
+    mutate(proportion = number_cases/n_papers) %>% 
+    arrange(desc(proportion), md_id) 
+
+# convert to factor to retain sorted order of mental disorders 
+temp_for_order$md_desc <- factor(temp_for_order$md_desc, levels=unique(temp_for_order$md_desc))  
+
+# Save ordered mental disorders
+md_all_ordered <- levels(temp_for_order$md_desc)
+
+default_palette <- c("NO ASSESSMENT"="#AF8DC3", "USABILITY/UX"="#D9F0D3", "EFFECT AND USABILITY/UX"="#7FBF7B", "EFFECT"="#1B7837")
 ```
-The final number of surveyed papers is `` `r n_papers` ``. For each paper, we have extracted `` `r ncol(all_data)` `` items.
+
+The final number of surveyed papers is `r n_papers`. For each paper, we have extracted `r ncol(all_data)` items. Each item is described in the methods section of the paper.
+
+About `r percent(n_assessment_yes/n_papers)` (N=`r n_assessment_yes`) of papers reported some kind of assessment, whereas `r percent(n_assessment_no/n_papers)` (N=`r n_assessment_no`) reported no assessment at all. Looking closer at the type of assessment: `r percent(n_assessment_effect/n_papers)` (N=`r n_assessment_effect`) focus on the effect of intervention on clinical symptomology; `r percent(n_assessment_effectux/n_papers)` (N=`r n_assessment_effectux`) report a mix of effect and usability / UX assessment; `r percent(n_assessment_ux/n_papers)` (N=`r n_assessment_ux`) focus solely on usability / UX.
+
+\newpage
+
+## Figures and tables
+
+### Figure 2: Temporal trend of amount of articles published and assessment type. The grey bar in the top figure denotes the estimated number of papers in 2018 (three months covered).
+
+It combines two plots. The top one is a _stacked bar chart_ over years, adn the vaue of each group (assessment type) is in absolute counts. The bottom one is a _proportional stacked area chart_ in which the sum of each year is always equal to hundred, and the value of each group (assessment type) is in percentages.
+
+```{r fig2_tempdist, echo=FALSE, dpi=600, fig.width=10, fig.height=22, fig.asp=1}
+cols <- c("md", "md_id", "md_desc", "val_asstype", "year")
+
+data_plot_tempdist <- 
+    all_data %>%
+    select(cols)
+
+data_plot_tempdist$val_asstype <- fct_relevel(data_plot_tempdist$val_asstype, 
+                                             c("NO ASSESSMENT", "USABILITY/UX", "EFFECT AND USABILITY/UX", "EFFECT"))
+
+data_plot_tempdist <- 
+    data_plot_tempdist %>%
+    group_by(year, val_asstype) %>%  # first create counts for each group
+    summarise(number_cases = n()) %>%
+    mutate(total_cases_per_year = sum(number_cases),
+           proportion = number_cases/total_cases_per_year,
+           proportion_lbl = paste0(round(proportion*100,1), "%"))
+
+# Not run
+# display.brewer.all()
+# display.brewer.pal(n = 6, name = "PRGn")
+# brewer.pal(n = 6, name = "PRGn")[2:5]
+pal <- default_palette
+
+# an estimate of published papers to this matter for 2018 
+prediction_2018 <- 52
+
+plot_tempdist_stakedbarchart <- 
+    data_plot_tempdist %>%
+        ggplot(aes(x=year, y=number_cases, fill=val_asstype)) + 
+        geom_bar(stat="identity") +
+        geom_text(aes(label=number_cases), size=2.5,position=position_stack(vjust = 0.5)) +
+        labs(#title="Count of papers per year,, colored by assessment type", 
+             x="", 
+             y="# of papers") +
+        scale_fill_manual(values = pal) +
+        scale_x_continuous(breaks = seq(2013,2018, by=1)) +
+        guides(fill="none") +
+        # Prediction 2018
+        annotate("rect", alpha = 0.2, 
+            xmin = 2018 - 0.45, xmax = 2018 + 0.45,
+            ymin = 13, ymax = prediction_2018, linetype="dashed") +
+        theme_minimal() +
+        # Change the line type and color of axis lines
+        theme(axis.line = element_line(colour = "darkgray", size = 0.5, linetype = "solid")) +
+        # theme(panel.grid.major = element_blank()) + 
+        theme(panel.grid.minor = element_blank()) +
+        theme(panel.background = element_blank()) +
+        theme(plot.margin=unit(rep(20, 4), "pt"))
+
+# plot_tempdist_stakedbarchart
+
+plot_tempdist_areachart <- 
+    data_plot_tempdist %>%
+        ggplot(aes(x=year, y=proportion, fill=val_asstype)) + 
+        geom_area() +
+        labs(#title="Temporal distribution of papers per assessment type",
+        x="Year", 
+        y="Percentage of papers [%]", 
+        caption="Source: authors") + 
+        guides(fill=guide_legend(title="Assessment Type", nrow=2)) + # modify legend title
+        scale_fill_manual(values = pal) +
+        scale_y_continuous(expand=c(0,0), labels=scales::percent_format(accuracy = 1), breaks=seq(0, 1.00, by=0.20), limits=c(0, 1.00)) +
+        theme_minimal() +
+        theme(legend.title = element_text(size=11), 
+              legend.position = "bottom",
+              legend.background = element_rect(color = "darkgray", size = 0.5, linetype ="solid"),
+              legend.key = element_blank()) +
+        # Change the line type and color of axis lines
+        theme(axis.line = element_line(colour = "darkgray", size = 0.5, linetype = "solid")) +
+        theme(panel.grid.major = element_blank()) + 
+        theme(panel.grid.minor = element_blank()) +
+        theme(panel.background = element_blank()) +
+        theme(plot.margin=unit(rep(20, 4), "pt"))
+
+#plot_tempdist_areachart
+
+# Put labels = C("A", "B") to identify subfigures 
+plot_tempdist <- plot_grid(plot_tempdist_stakedbarchart, plot_tempdist_areachart, labels = NULL, ncol= 1, align = "v") 
+plot_tempdist
+
+plot_tempdist_file_name <- "fig2_tempdist.png"
+ggsave(plot = plot_tempdist, filename = plot_tempdist_file_name, device = "png", path = here::here("figs"),
+     scale = 1, width = 20, height = 28, units = "cm", dpi = 600)
+
+```
+
+\newpage
+
+### Figure 3: Distribution of articles per mental disorder, categorized according to assessment type. The embedded pie chart shows the proportional distribution of types of assessment over all mental disorders.
+
+The main plot is a _stacked barchart_ colored by assessment type along with a _lollipop chart_ (white circle at the end of each bar) that shows the total percentatge of each mental disorder. Note that we draw two main colors in the legend: purple represents no assessment at all, the range of greens denotes distinct types of assessment. A _pie chart_ is embedded to show the proportional distribution of types of assessment over all mental disorders.
+
+```{r fig3_barchart, echo=FALSE,dpi=600,fig.width=10,fig.asp=0.65}
+cols <- c("md", "md_id", "md_desc", "val_asstype")
+
+data_plot_barchart <- 
+    all_data %>%
+    select(cols)
+
+data_plot_barchart <- 
+    data_plot_barchart %>% 
+        group_by(md_id, md_desc, val_asstype) %>%  # first create counts for each group
+        summarise(number_cases = n()) %>%
+        mutate(proportion = number_cases/n_papers) %>% 
+        ungroup() %>%
+        group_by(md_id) %>%
+        mutate(total_cases = sum(number_cases),
+               proportion_sum = sum(proportion),
+               proportion_lbl = paste0(round(proportion_sum*100,1), "%")) %>% 
+        ungroup() %>%
+        mutate(lbl = paste0(round(number_cases/total_cases*100,1), "%")) %>% 
+        arrange(desc(proportion_sum), md_id)
+
+# convert to factor to retain sorted order in plot.
+data_plot_barchart$md_desc <- factor(data_plot_barchart$md_desc, levels=unique(data_plot_barchart$md_desc))  
+
+data_plot_barchart$val_asstype <- fct_relevel(data_plot_barchart$val_asstype, 
+                                            c("NO ASSESSMENT", "USABILITY/UX", "EFFECT AND USABILITY/UX", "EFFECT"))
+                                            
+pal <- default_palette
+
+lbls <- distinct(data_plot_barchart, md_desc, proportion_sum, proportion_lbl)
+
+top_proportion <- sum(lbls[1:6, "proportion_sum"]) 
+top_lbl <- paste0(round(top_proportion*100,1), "%")
+
+plot_barchart <- 
+    data_plot_barchart %>%
+      ggplot(aes(x=md_desc, y=proportion, fill=val_asstype)) + 
+        geom_bar(stat="identity") +
+        labs(#title="Distribution per mental disorder and assessment type", 
+             #subtitle = "Total percentatge per mental disorder within each point",
+             x="Mental disorders", 
+             y="# of papers and total percentage", 
+             caption="Source: authors") + 
+        # geom_segment(aes(x=md_desc, y=0, xend=md_desc, yend=proportion_sum), color="white") + # grey50
+        geom_point(aes(y=proportion_sum), size=6, color="white", show.legend = F) +  
+        # geom_text(aes(label=number_cases), size=2.5, position=position_stack(vjust = 0.5)) +
+        geom_text(aes(label=number_cases), size=2.5, position=position_stack(vjust = 0.4)) +
+        # Percentatge inside point
+        annotate("text", x = lbls$md_desc, y = lbls$proportion_sum,
+                 label = lbls$proportion_lbl, color = "black", size=2, hjust = 0.4, vjust = 0.2) +
+        # Arrow to indidate  Top6 mental disorders 
+        annotate("text", x = "Schizophrenia spectrum and\n other psychotic disorders", y = .16,
+                 label = top_lbl, color = "black", size = 3, hjust = -0.1, vjust = 1.2) +
+        geom_segment(aes(x = "Schizophrenia spectrum and\n other psychotic disorders", 
+                         xend = "Substance-related and\n addictive disorders", 
+                         y = .18, 
+                         yend = .18),
+                         arrow = arrow(length = unit(0.5,"cm")), color = "black") +
+        geom_segment(aes(x="Schizophrenia spectrum and\n other psychotic disorders", 
+                         y=0.11, 
+                         xend="Schizophrenia spectrum and\n other psychotic disorders", 
+                         yend=0.18), color="black") +
+        coord_flip() +
+        scale_fill_manual(name="Assessment Type", values = pal) + 
+        scale_y_continuous(expand=c(0,0), labels=scales::percent_format(accuracy = 1), breaks=seq(0, 0.21, by=0.02), limits=c(0, 0.21)) +
+        # Which legend to show
+        guides(fill=guide_legend(title="Assessment Type", nrow=2)) + # modify legend title
+        theme_minimal()  +
+        theme(legend.title = element_text(size=11),
+              legend.position = "bottom",
+              legend.background = element_rect(color = "darkgray", size = 0.5, linetype ="solid"),
+              legend.key = element_blank()) +
+        # Change the line type and color of axis lines
+        theme(axis.line = element_line(colour = "darkgray", size = 0.5, linetype = "solid")) +
+        theme(panel.grid.major = element_blank()) + 
+        theme(panel.grid.minor = element_blank()) +
+        theme(panel.background = element_blank()) +
+        theme(plot.margin=unit(rep(20, 4), "pt"))
+
+# plot_barchart
 
 
-```{r md_ordered, echo=FALSE}
+data_plot_piechart <-
+    data_plot_barchart %>%
+    group_by(val_asstype) %>%
+    summarise(total_asstype = sum(number_cases)) %>%
+    mutate(lbl = paste0(round(total_asstype/n_papers*100,1), "%"),
+           cumulative= cumsum(total_asstype),
+           midpoint = cumulative-total_asstype/2) %>% 
+    arrange(desc(total_asstype))
+
+data_plot_piechart$val_asstype <-  fct_relevel(data_plot_piechart$val_asstype, 
+                                               c("EFFECT", "USABILITY/UX", "NO ASSESSMENT", "EFFECT AND USABILITY/UX"))
+plot_piechart <- 
+    data_plot_piechart %>%
+    ggplot(aes(x="", y=total_asstype, fill=val_asstype)) +
+    geom_bar(width=1, stat = "identity") +
+    coord_polar(theta="y", start=0, direction = 1) +
+    geom_text(aes(y=midpoint, label=lbl), size=3, show.legend = F) +
+    scale_fill_manual(name="Assessment Type", values = pal) + 
+    # Which legend to show
+    guides(fill="none") +
+    theme_minimal() +
+    theme(legend.title = element_text(size=9)) +
+    theme(axis.text = element_blank(),
+          axis.ticks = element_blank(),
+          panel.grid = element_blank()) +
+    theme(panel.border = element_rect(fill=NA, colour = "darkgray", size=0.5)) +
+    labs(x=NULL, y=NULL, title="Accumulated results [%]")
+
+# plot_piechart
+
+plot_dist_md <-
+    ggdraw() +
+    draw_plot(plot_barchart) +
+    draw_plot(plot_piechart, 0.55, 0.55, 0.40, 0.40)
+
+plot_dist_md
+
+plot_dist_md_file_name <- "fig3_dist_md.png"
+ggsave(plot = plot_dist_md, filename = plot_dist_md_file_name, device = "png", path = here::here("figs"),
+     scale = 1, width = 22, height = 18, units = "cm", dpi = 600)
 
 ```
 
 
-## Figure 2. Temporal distribution of papers per assessment type
+To complement the previous figure, some percentages are discussed in the body of the article which are included in the following table. Note: the table as it is does not appear on the paper.
 
-Temporal distribution of papers colored by assessment type. It is a proportional stacked area chart in which the sum of each year is always equal to hundred, and the value of each group (assessment type) is in percentages.
+```{r stats_assesstype_md, echo=FALSE}
 
-\newpage
+data_plot_barchart %>%
+    # arrange(desc(md_desc)) %>%
+    select(`Mental Disorder` = md_desc,
+           `Type of assessment` = val_asstype,
+           `Percentage`= lbl) %>%
+    kable(formt="html", escape = T, booktabs = TRUE) %>%
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+    column_spec(1, bold = T) %>%
+    collapse_rows(columns = 1, valign = "top")
+```
 
-## Figure 3. Distribution of papers per mental disorder and assessment type
-
-Proportional (stacked) barchart: Distribution of papers per mental disorders, colored by assessment type. Note that we draw two main colors in the legend: purple represents no assessment at all, the range of greens denotes distinct types of assessment. Total percentatge per mental disorder is given at the end of each bar (white circle).
-
-\newpage
-
-
-## Figure 4. Distribution top mental disorders per year
-
-Linechart: Distribution of papers (top6 mental disorders) per year.
-
-
-### Table 1. Distribution of apps per mental disorder
-
-_Compact_ distribution of papers (apps) per mental disorder, grouping the references per app. The number(s) in brackets next to the app name is the reference(s) in which the app is mentioned. In the table below, these references are internal identifiers instead. "NA" means the app name is not available / is not mentioned in the paper. 
 
 \newpage
 
 
-## Figure 5. Distribution of papers per mental disorder vs technology
+### Figure 4: Distribution of articles published for the top 6 mental disorders over time.
 
-Bubble plot: Distribution of papers per mental disorder and technology characteristics grouped by dimensions (software features, sensor capabilities, and type of analysis). Technology-related characteristics are ranked in each dimension.
+A _line chart_ to show the number of papers per mental disorder and year. 
+
+
+```{r fig4_linechart, echo=FALSE, dpi=600, fig.width=12, fig.height=14, fig.asp=0.65}
+cols_top <- c("Depressive disorders", 
+              "Anxiety disorders", 
+              "Various disorders",
+              "Trauma and\n stressor-related disorders",
+              "Substance-related and\n addictive disorders",
+              "Schizophrenia spectrum and\n other psychotic disorders")
+top <- levels(all_data$md)[1:6]
+
+data_plot_topmd <- 
+    all_data %>%
+      filter(md %in% top) %>%
+      group_by(md_desc, year) %>%
+      summarise(number_cases = n()) %>%
+      ungroup() %>%
+      mutate(md_desc = factor(md_desc)) %>%
+      arrange(desc(number_cases))
+
+#' Add mental disorders with zero cases
+for (y in 2013:2018) {
+    md_year <- filter(data_plot_topmd, year==y) %>% select(md_desc)
+    md_dif <- setdiff(cols_top, md_year$md_desc)
+    if (length(md_dif) > 0) {
+        for (md in md_dif) {
+            data_plot_topmd <- add_row(data_plot_topmd, md_desc=md, year=y, number_cases=0)
+        }
+    }
+}
+
+
+data_plot_topmd$md_desc <- fct_relevel(data_plot_topmd$md_desc, cols_top)
+brks <- levels(data_plot_topmd$md_desc) 
+
+
+plot_topmd <-
+    data_plot_topmd %>%
+        ggplot(aes(x=year, y=number_cases, group=md_desc)) +
+        geom_vline(aes(xintercept = 2017), color="lightgray", linetype = "dashed", size = 0.5) +
+        annotate("rect", xmin = 2017, xmax = 2018, ymin = -Inf, ymax = +Inf, fill = "lightgray", alpha = 0.2) +
+        geom_line(aes(color=md_desc), size=2.5, alpha=.4) +
+        geom_point(shape=21, size=7, color="darkgray", fill="white") +
+        labs(#title="Distribution top mental disorders per year", 
+             #subtitle = paste0("Top mental disorders (", top_lbl,")"),
+             x="Year", 
+             y="# of papers", 
+             caption="Source: authors") + 
+        scale_color_brewer(name="Mental disorders", palette="Set2", breaks=brks) +
+        # geom_text(aes(label = number_cases), color= "white", size=3) +
+        geom_text(aes(label = number_cases), color= "black", size=3) +
+        scale_y_continuous(breaks=seq(0,8,by=1)) +
+        theme_minimal() +
+        # Legend: Top-Left Inside the Plot") 
+        theme(legend.justification = c('left', 'top'),
+              legend.position=c(0.05, 0.95),  
+              legend.background = element_rect(color = "darkgray", size = 0.5, linetype ="solid"),
+              legend.key = element_blank()) +
+        theme(panel.grid.major = element_blank()) + 
+        theme(panel.grid.minor = element_blank()) +
+        theme(panel.background = element_blank()) +
+        theme(plot.margin=unit(rep(20, 4), "pt")) +
+        # Change the line type and color of axis lines
+        theme(axis.line = element_line(colour = "darkgray", size = 0.5, linetype = "solid"))
+
+plot_topmd
+plot_file_name <- "fig4_linechart.png"
+ggsave(plot = plot_topmd, filename = plot_file_name, device = "png", path = here::here("figs"),
+    scale = 1, width = 20, height = 18, units = "cm", dpi = 600) 
+
+```
+
+
+\newpage
+
+
+### Table 1: Mental disorders and the studies targeting them: NA = app name not available/not mentioned.
+
+A tabular, compact distribution of papers (apps) per mental disorder, grouping the references per app. The number(s) in brackets next to the app name is the reference(s) in which the app is mentioned. In the table below, these references are internal identifiers instead. 
+
+
+```{r tab1, echo=FALSE}
+
+unite_paper_ids <- function(mentaldisorder, appname) {
+    if (!is.na(appname)) {
+        all_data %>% 
+            filter(md_desc == mentaldisorder & app_name==appname) %>%
+            arrange(year) %>%
+            select(id) %>%
+            as_vector() %>%
+            stringr::str_c(collapse = ";")    
+    } else {
+         all_data %>% 
+            filter(md_desc == mentaldisorder & is.na(app_name)) %>%
+            arrange(year) %>%
+            select(id) %>%
+            as_vector() %>%
+            stringr::str_c(collapse = ";")  
+    }
+}
+
+data_kp_apps <- 
+    all_data %>%
+    group_by(md_desc, app_name) %>%
+    summarise(number_apps = n()) %>% 
+    arrange(number_apps, md_desc)
+
+data_kp_apps <- 
+    data_kp_apps %>%
+    add_column(ids = purrr::map2(data_kp_apps$md_desc, data_kp_apps$app_name, unite_paper_ids))
+
+data_kp_apps <- 
+    data_kp_apps %>%
+    add_column(app_ids = paste0(data_kp_apps$app_name, " (", data_kp_apps$ids, ")"))
+
+data_kp_apps <- 
+    data_kp_apps %>%
+    group_by(md_desc) %>%
+    summarise(app_ids_merge = paste0(app_ids, collapse = ", ")) 
+
+data_kp_apps$md_desc <- factor(data_kp_apps$md_desc, levels=md_all_ordered)  
+
+
+# options(knitr.kable.NA = '-')
+data_kp_apps %>%
+    arrange(desc(md_desc)) %>%
+    select(`Mental Disorder` = md_desc,
+           `References by app` = app_ids_merge) %>%
+    kable(format="html", escape = T, booktabs = TRUE,    
+          caption = paste0("Compact distribution of papers (apps) per mental disorder\n", 
+                            "'NA' is app not specified/available")) %>%
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+    column_spec(1, bold = T) %>%
+    collapse_rows(columns = 1, valign = "top") 
+
+```
 
 
 
+\newpage
+
+
+### Figure 5: Bubble plot representing technology-related dimensions (software features - orange; built-in sensors - green; analytics - blue) versus mental disorders. Bubble size corresponds with amount of articles.
+
+It is a _bubble plot_ that shows the distribution of papers per mental disorder (bubble size) and technology-related characteristics grouped by dimensions (bubble color): software features, built-in sensors, and analytics. Technology-related characteristics are ranked in each dimension.
+
+
+```{r fig5_feat, echo=FALSE, warning=FALSE}
+cols = c("id", "md_id", "md_desc", 
+         "feat_use", "feat_promp", "feat_soc", "feat_hcp", "feat_learn", 
+         "feat_prog", "feat_ca", "feat_ass", "feat_vr", "feat_ar", "feat_pers", "feat_game",
+         "app_name", "year")
+
+cols_feat = c("feat_use", "feat_promp", "feat_soc", "feat_hcp", "feat_learn", 
+              "feat_prog", "feat_ca", "feat_ass", "feat_vr", "feat_ar", "feat_pers", "feat_game")
+
+data_kp_feat <- 
+    all_data %>%
+    select(cols) %>%
+    gather(cols_feat, key="tech_type",value="tech_value") %>%
+    mutate(cat = "Software features") %>%
+    filter(tech_value == "YES") %>%
+    group_by(md_desc, tech_type, cat)  %>%
+    summarise(number_cases = n())  %>%
+    ungroup() # required to add_row() 
+
+
+# For totals in final bubble plot
+data_kp_feat_n <-
+    data_kp_feat %>%
+    group_by(tech_type) %>%
+    summarise(n = sum(number_cases)) %>%
+    arrange(desc(n))
+                  
+
+md_feat <- unique(data_kp_feat$md_desc)
+md_dif <- setdiff(md_all_ordered, md_feat)
+if (length(md_feat) > 0) {
+    for (md in md_dif) {
+        # Added "feat_use" (or any value) to avoid NA in the "tech_type" variable. Nothing is drawn in the plot
+        data_kp_feat <- add_row(data_kp_feat, md_desc=md, tech_type="feat_use", cat="Software features")
+    }
+}
+
+data_kp_feat$md_desc <- factor(data_kp_feat$md_desc, levels=md_all_ordered)  
+
+```
+
+```{r fig5_sens, echo=FALSE, warning=FALSE}
+cols = c("id", "md_id", "md_desc", 
+         "sens_acc", "sens_gyr", "sens_gps", "sens_mic", "sens_cam",
+         "app_name", "year")
+
+cols_sens <- c("sens_acc", "sens_gyr", "sens_gps", "sens_mic", "sens_cam")
+data_kp_sens <-
+    all_data %>%
+    select(cols) %>%
+    gather(cols_sens, key="tech_type", value="tech_value") %>%
+    mutate(cat = "Built-In sensors") %>%
+    filter(tech_value == "YES") %>%
+    group_by(md_desc, tech_type, cat) %>%
+    summarise(number_cases = n()) %>%
+    ungroup() # required to add_row() 
+
+
+# For totals in final bubble plot
+data_kp_sens_n <-
+    data_kp_sens %>%
+    group_by(tech_type) %>%
+    summarise(n = sum(number_cases)) %>%
+    arrange(desc(n))
+                  
+
+md_sens <- unique(data_kp_sens$md_desc)
+md_dif <- setdiff(md_all_ordered, md_sens)
+if (length(md_dif) > 0) {
+    for (md in md_dif) {
+        # Added "sens_mic" (or any other values) to avoid NA in the "tech_type" variable. Nothing is drawn in the plot
+        data_kp_sens <- add_row(data_kp_sens, md_desc=md, tech_type="sens_mic", cat="Built-In sensors")
+    }
+}
+
+data_kp_sens$md_desc <- fct_relevel(data_kp_sens$md_desc, levels=md_all_ordered)
+
+
+```
+
+
+
+```{r fig5_anal, echo=FALSE, warning=FALSE}
+cols = c("id", "md", "md_id", "md_desc", 
+         "anal_ml", "anal_beh", "anal_act", "anal_sp", 
+         "app_name", "year")
+
+cols_anal = c("anal_ml", "anal_beh", "anal_act", "anal_sp")
+
+data_kp_anal <- 
+    all_data %>%
+    select(cols) %>%
+    gather(cols_anal, key="tech_type",value="tech_value") %>%
+    mutate(cat = "Analytics") %>%
+    filter(tech_value == "YES") %>%
+    group_by(md_desc, tech_type, cat)  %>%
+    summarise(number_cases = n())  %>%
+    ungroup() # required to add_row() 
+
+# For totals in final bubble plot
+data_kp_anal_n <-
+    data_kp_anal %>%
+    group_by(tech_type) %>%
+    summarise(n = sum(number_cases)) %>%
+    arrange(desc(n))
+
+md_anal <- unique(data_kp_anal$md_desc)
+md_dif <- setdiff(md_all_ordered, md_anal)
+if (length(md_anal) > 0) {
+    for (md in md_dif) {
+        # Added "anal_ml" (or any value) to avoid NA in the "tech_type" variable. Nothing is drawn in the plot
+        data_kp_anal <- add_row(data_kp_anal, md_desc=md, tech_type="anal_ml", cat="Analytics")
+    }
+}
+
+data_kp_anal$md_desc <- factor(data_kp_anal$md_desc, levels=md_all_ordered)  
+
+```
+
+
+```{r fig5_alltogether, echo=FALSE, warning=FALSE, dpi=600, fig.width=15, fig.height=14, fig.asp=0.65}
+
+data_kp_all <-
+    bind_rows(data_kp_feat, data_kp_sens, data_kp_anal)
+
+data_kp_all$tech_type <- as_factor(data_kp_all$tech_type)
+#' Replace existing factors levels for figure production
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_learn"] <- "Learning"
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_prog"] <- "Progress"
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_pers"] <- "Personalization"
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_ass"] <- "Assessment"
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_promp"] <- "Prompting"
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_hcp"] <- "Health Care Provider \nCommunication"
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_use"] <- "In-Situ Use"
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_soc"] <- "Social"
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_ca"] <- "Context-Awareness"
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_game"] <- "Game"
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_vr"] <- "Virtual Reality"
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_ar"] <- "Augmented Reality"
+
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="sens_mic"] <- "Microphone"
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="sens_gps"] <- "GPS"
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="sens_cam"] <- "Camera"
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="sens_acc"] <- "Accelerometer"
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="sens_gyr"] <- "Gyroscope"
+
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="anal_ml"] <- "Machine Learning"
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="anal_act"] <- "Activity Analysis"
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="anal_beh"] <- "Behavioral Analysis"
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="anal_sp"] <- "Spatial Analysis"
+
+cols_ordered <-  c("Learning", "Progress", "Personalization", "Assessment", "Prompting", "Health Care Provider \nCommunication", 
+                   "In-Situ Use", "Social", "Context-Awareness", "Game",  "Virtual Reality", "Augmented Reality", 
+                   "Microphone", "GPS", "Camera", "Accelerometer", "Gyroscope",  
+                   "Machine Learning", "Activity Analysis", "Behavioral Analysis", "Spatial Analysis") 
+dims_ordered <- c("Software features", "Built-In sensors", "Analytics")
+
+data_kp_all$tech_type <- fct_relevel(data_kp_all$tech_type, cols_ordered)
+
+data_kp_all_n <-
+    bind_rows(data_kp_feat_n, data_kp_sens_n, data_kp_anal_n)
+
+data_kp_all_n <-
+    data_kp_all_n %>%
+    mutate(tech_label = cols_ordered)
+
+
+data_kp_all$cat <- factor(data_kp_all$cat)
+data_kp_all$cat <- fct_relevel(data_kp_all$cat, dims_ordered)
+brks <- levels(factor(data_kp_all$cat))
+
+# Color per dimension: 
+# Software features "#FC8D62"; Built-In sensors "#66C2A5"; Types of analyses "#8DA0CB"
+lbls_colors <- 
+    ifelse(unique(data_kp_all$tech_type) %in% c("Learning", "Progress", "Personalization", "Assessment", "Prompting", "Health Care Provider \nCommunication", "In-Situ Use", "Social", "Context-Awareness", "Game",  "Virtual Reality", "Augmented Reality"), "#FC8D62",
+           ifelse(unique(data_kp_all$tech_type) %in% c("Microphone", "GPS", "Camera", "Accelerometer", "Gyroscope"), "#66C2A5",
+           "#8DA0CB"))
+               
+kp_bubblechart <- 
+    data_kp_all %>%
+    ggplot(aes(x=md_desc, y=tech_type, colour=cat)) +
+    geom_point(aes(size=number_cases), alpha=1, na.rm = TRUE)+#, show.legend = FALSE) +
+    geom_text(aes(label=number_cases), colour="black", size=3, na.rm = TRUE) +
+    scale_size_area(max_size=18) +
+    coord_flip() +
+    labs(#title="Mental disorders vs Technology", 
+         #subtitle = "Technology-related characteristics are ranked in each dimension",
+         x="Mental disorders", 
+         y="Technology-related characteristics", 
+         caption="Source: authors") + 
+    scale_color_manual(name="Dimensions", breaks=brks,
+                       values = c("Software features"="#FC8D62","Built-In sensors"="#66C2A5", "Analytics"="#8DA0CB")) +
+    # Which legend to show
+    guides(colour="legend",size = "none") +
+    theme_minimal()  +
+    theme(axis.text.x=element_text(angle=60, size=11, hjust=1, color=lbls_colors),
+          axis.text.y=element_text(size=11)) +
+    # Legend: Top-Right Inside the Plot") 
+    theme(legend.title = element_text(size=9),
+          legend.justification = c('right', 'top'),
+          legend.position=c(1, 0.90),
+          legend.background = element_rect(color = "darkgray", size = 0.5, linetype ="solid"),
+          legend.key = element_blank()) +
+    # Change the line type and color of axis lines
+    theme(axis.line = element_line(colour = "darkgray", size = 0.5, linetype = "solid")) +
+    theme(panel.grid.major.x = element_blank()) + 
+    theme(panel.grid.minor = element_blank()) +
+    theme(panel.background = element_blank()) +
+    theme(plot.margin=unit(rep(20, 4), "pt")) 
+
+# Add annotations: total of columns
+kp_bubblechart <-
+    kp_bubblechart +
+    annotate("rect", xmin = 14.40, xmax = 14.75, ymin = 0.5, ymax = 12.4, 
+             fill = "#FC8D62", alpha = 0.6) +
+    annotate("rect", xmin = 14.40, xmax = 14.75, ymin = 12.6, ymax = 17.4, 
+             fill = "#66C2A5", alpha = 0.6) +
+    annotate("rect", xmin = 14.40, xmax = 14.75, ymin = 17.6, ymax = 21.5, 
+             fill = "#8DA0CB", alpha = 0.6)
+    
+for (i in 1:nrow(data_kp_all_n)) {
+     kp_bubblechart <-
+        kp_bubblechart +
+        annotate("text", x = "Personality disorders", y = data_kp_all_n$tech_label[i], label = data_kp_all_n$n[i],
+                 color = "white", fontface="bold", size=3, hjust = 0.4, vjust = -3)
+}
+
+# Add rectangles to highlight group of bubbles
+kp_bubblechart <-
+    kp_bubblechart +
+    annotate("rect", xmin = 0.5, xmax = 11.5, ymin = 0.5, ymax = 7.5, 
+             fill = "lightgray", alpha = 0.2, linetype="dashed") +
+    annotate("rect", xmin = 0.5, xmax = 5.5, ymin = 0.5, ymax = 9.5, 
+             fill = "lightgray", alpha = 0.2)
+
+kp_bubblechart
+
+kp_file_name <- "fig5_bubble.png"
+ggsave(plot = kp_bubblechart, filename = kp_file_name, device = "png", path = here::here("figs"),
+    scale = 1, width = 40, height = 25, units = "cm", dpi = 600)
+
+
+```

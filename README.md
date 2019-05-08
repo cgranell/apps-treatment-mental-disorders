@@ -12,9 +12,9 @@ In RStudio, open the file `analysis.Rmd`, the _main analysis file_. Then select 
 
 ## Reproduce locally
 
-Open the main analysis file `analysis.Rmd` with RStudio. Then select "Knit > Knit to HTML" to render the document. If you have errors rendering the whole PDF, try running each chunk to locate the problem.
+Open the main analysis file `analysis.Rmd` with RStudio. Then select "Knit > Knit to HTML" to render the document. If you have errors rendering it, try running each chunk to locate the problem.
 
-The document does not include code to install required packages. Run the code in the file `install.R` to install all dependencies.
+The Markdown document does not include code to install required packages. Run the code in the file `install.R` to install all dependencies.
 
 ## Reproduce locally with Docker
 
