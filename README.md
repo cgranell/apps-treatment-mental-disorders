@@ -1,6 +1,7 @@
-# apps-treatment-mental-disorders
+# Smartphone apps for the treatment of mental disorders: Data, analysis and computational environment
 R Markdown notebook for the paper "Smartphone apps for the treatment of mental disorders: a systematic review"
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2682244.svg)](https://doi.org/10.5281/zenodo.2682244)
 
 ## Reproduce Online
 
@@ -42,7 +43,7 @@ Open a browser at http://localhost:8888 or click on the login link shown in the 
 
 ## Deposition on Zenodo
 
-This repository is archived on Zenodo:
+This repository is archived on Zenodo with DOI: [10.5281/zenodo.2682244](https://doi.org/10.5281/zenodo.2682244)
 
 
 ## License
