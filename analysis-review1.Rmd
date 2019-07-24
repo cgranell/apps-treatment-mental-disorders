@@ -33,8 +33,8 @@ library(here)
 library(tidyverse)
 library(forcats)
 library(cowplot)    # publication-ready theme for ggplot2
-
 library(kableExtra)
+
 library(purrr)
 library(scales)
 library(knitr)
@@ -193,6 +193,62 @@ plot_tempdist_file_name <- "fig2_tempdist.png"
 cowplot::ggsave2(plot = plot_tempdist, filename = plot_tempdist_file_name, device = "png", path = here::here("figs"), scale = 1, width = 20, height = 28, units = "cm", dpi = 600)
 
 ```
+
+\newpage
+
+### Table 1: Evolution of assessment types 
+
+
+```{r tab1new, echo=FALSE}
+
+data_tbl_assess <- 
+    all_data %>%
+    select(val_type) %>%
+    group_by(val_type) %>%
+    summarise(n = n()) %>%
+    mutate(n_lbl = paste0(n, " (", round(n/n_papers*100,1), "%)"))
+
+data_tbl_rct <- 
+    all_data %>%
+    select(val_type, val_edrct) %>%
+    filter(val_edrct == "RCT") %>%
+    group_by(val_type, val_edrct) %>%
+    summarise(n = n()) %>%
+    mutate(n_lbl = paste0(n, " (", round(n/n_papers*100,1), "%)"))
+
+
+data_tbl_pilotrct <- 
+    all_data %>%
+    select(val_type, val_edrct) %>%
+    filter(val_edrct == "PILOT RCT") %>%
+    group_by(val_type, val_edrct) %>%
+    summarise(n = n()) %>%
+    mutate(n_lbl = paste0(n, " (", round(n/n_papers*100,1), "%)"))
+
+data_tbl_assesstype <-
+  data_tbl_assess %>%
+  full_join(data_tbl_rct, by="val_type", suffix=c("",".rct")) %>%
+  full_join(data_tbl_pilotrct, by="val_type", suffix=c("",".pilot")) %>%
+  select(-n, -val_edrct, -n.rct, -val_edrct.pilot, -n.pilot)
+
+data_tbl_assesstype$val_type <- forcats::fct_relevel(data_tbl_assesstype$val_type, assessemnt_type) 
+
+# options(knitr.kable.NA = '-')
+data_tbl_assesstype %>%
+    arrange(val_type) %>%
+    select(`Assessment type` = val_type,
+           `N (%)` = n_lbl,
+           `RCT - N (%)` = n_lbl.rct,
+           `PILOT RCT - N (%)` = n_lbl.pilot) %>%
+    knitr::kable(format="html", escape = T, booktabs = TRUE,    
+          caption = paste0("Distribution of assessment type. ", 
+                            "'NA' is Not Applicable/No Data")) %>%
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+    column_spec(1, bold = T)
+
+
+```
+
 
 \newpage
 
