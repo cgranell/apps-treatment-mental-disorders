@@ -34,9 +34,10 @@ library(tidyverse)
 library(forcats)
 library(cowplot)    # publication-ready theme for ggplot2
 library(kableExtra)
-
-library(purrr)
 library(scales)
+
+# library(purrr)
+
 library(knitr)
 #slibrary(RColorBrewer)
 
@@ -196,10 +197,10 @@ cowplot::ggsave2(plot = plot_tempdist, filename = plot_tempdist_file_name, devic
 
 \newpage
 
-### Table 1: Evolution of assessment types 
+### NEW: Table Evolution of assessment types 
 
 
-```{r tab1new, echo=FALSE}
+```{r tab_assessmenttypes, echo=FALSE}
 
 data_tbl_assess <- 
     all_data %>%
@@ -231,7 +232,7 @@ data_tbl_assesstype <-
   full_join(data_tbl_pilotrct, by="val_type", suffix=c("",".pilot")) %>%
   select(-n, -val_edrct, -n.rct, -val_edrct.pilot, -n.pilot)
 
-data_tbl_assesstype$val_type <- forcats::fct_relevel(data_tbl_assesstype$val_type, assessemnt_type) 
+data_tbl_assesstype$val_type <- forcats::fct_relevel(data_tbl_assesstype$val_type, assessment_type) 
 
 # options(knitr.kable.NA = '-')
 data_tbl_assesstype %>%
@@ -257,7 +258,7 @@ data_tbl_assesstype %>%
 The main plot is a _stacked barchart_ colored by assessment type along with a _lollipop chart_ (white circle at the end of each bar) that shows the total percentatge of each mental disorder. Note that we draw two main colors in the legend: purple represents no assessment at all, the range of greens denotes distinct types of assessment. A _pie chart_ is embedded to show the proportional distribution of types of assessment over all mental disorders.
 
 ```{r fig3_barchart, echo=FALSE,dpi=600,fig.width=10,fig.asp=0.65}
-cols <- c("md", "md_id", "md_desc", "val_asstype")
+cols <- c("md", "md_id", "md_desc", "val_type")
 
 data_plot_barchart <- 
     all_data %>%
@@ -265,7 +266,7 @@ data_plot_barchart <-
 
 data_plot_barchart <- 
     data_plot_barchart %>% 
-        group_by(md_id, md_desc, val_asstype) %>%  # first create counts for each group
+        group_by(md_id, md_desc, val_type) %>%  # first create counts for each group
         summarise(number_cases = n()) %>%
         mutate(proportion = number_cases/n_papers) %>% 
         ungroup() %>%
@@ -278,11 +279,12 @@ data_plot_barchart <-
         arrange(desc(proportion_sum), md_id)
 
 # convert to factor to retain sorted order in plot.
-data_plot_barchart$md_desc <- factor(data_plot_barchart$md_desc, levels=unique(data_plot_barchart$md_desc))  
+# FIXME: Order of mental disorders is not ensured 
+# data_plot_barchart$md_desc <- factor(data_plot_barchart$md_desc, levels=md_all_ordered)
+data_plot_barchart$md_desc <- forcats::fct_relevel(data_plot_barchart$md_desc, md_all_ordered)  
 
-data_plot_barchart$val_asstype <- forcats::fct_relevel(data_plot_barchart$val_asstype, 
-                                            c("NO ASSESSMENT", "USABILITY/UX", "EFFECT AND USABILITY/UX", "EFFECT"))
-                                            
+data_plot_barchart$val_type <- forcats::fct_relevel(data_plot_barchart$val_type, assessment_type)
+
 pal <- default_palette
 
 lbls <- distinct(data_plot_barchart, md_desc, proportion_sum, proportion_lbl)
@@ -292,7 +294,7 @@ top_lbl <- paste0(round(top_proportion*100,1), "%")
 
 plot_barchart <- 
     data_plot_barchart %>%
-      ggplot(aes(x=md_desc, y=proportion, fill=val_asstype)) + 
+      ggplot(aes(x=md_desc, y=proportion, fill=val_type)) + 
         geom_bar(stat="identity") +
         labs(#title="Distribution per mental disorder and assessment type", 
              #subtitle = "Total percentatge per mental disorder within each point",
@@ -305,16 +307,16 @@ plot_barchart <-
         annotate("text", x = lbls$md_desc, y = lbls$proportion_sum,
                  label = lbls$proportion_lbl, color = "black", size=2, hjust = 0.4, vjust = 0.2) +
         # Arrow to indidate  Top6 mental disorders 
-        annotate("text", x = "Schizophrenia spectrum and\n other psychotic disorders", y = .16,
+        annotate("text", x = "Schizophrenia spectrum and other psychotic disorders", y = .16,
                  label = top_lbl, color = "black", size = 3, hjust = -0.1, vjust = 1.2) +
-        geom_segment(aes(x = "Schizophrenia spectrum and\n other psychotic disorders", 
-                         xend = "Substance-related and\n addictive disorders", 
+        geom_segment(aes(x = "Schizophrenia spectrum and other psychotic disorders", 
+                         xend = "Substance-related and addictive disorders", 
                          y = .18, 
                          yend = .18),
                          arrow = arrow(length = unit(0.5,"cm")), color = "black") +
-        geom_segment(aes(x="Schizophrenia spectrum and\n other psychotic disorders", 
+        geom_segment(aes(x="Schizophrenia spectrum and other psychotic disorders", 
                          y=0.11, 
-                         xend="Schizophrenia spectrum and\n other psychotic disorders", 
+                         xend="Schizophrenia spectrum and other psychotic disorders", 
                          yend=0.18), color="black") +
         coord_flip() +
         scale_fill_manual(name="Assessment Type", values = pal) + 
@@ -335,21 +337,20 @@ plot_barchart <-
 
 # plot_barchart
 
-
 data_plot_piechart <-
     data_plot_barchart %>%
-    group_by(val_asstype) %>%
+    group_by(val_type) %>%
     summarise(total_asstype = sum(number_cases)) %>%
     mutate(lbl = paste0(round(total_asstype/n_papers*100,1), "%"),
            cumulative= cumsum(total_asstype),
            midpoint = cumulative-total_asstype/2) %>% 
     arrange(desc(total_asstype))
 
-data_plot_piechart$val_asstype <- forcats::fct_relevel(data_plot_piechart$val_asstype, 
-                                               c("EFFECT", "USABILITY/UX", "NO ASSESSMENT", "EFFECT AND USABILITY/UX"))
+data_plot_piechart$val_type <- forcats::fct_relevel(data_plot_piechart$val_type, assessment_type)
+
 plot_piechart <- 
     data_plot_piechart %>%
-    ggplot(aes(x="", y=total_asstype, fill=val_asstype)) +
+    ggplot(aes(x="", y=total_asstype, fill=val_type)) +
     geom_bar(width=1, stat = "identity") +
     coord_polar(theta="y", start=0, direction = 1) +
     geom_text(aes(y=midpoint, label=lbl), size=3, show.legend = F) +
@@ -374,8 +375,7 @@ plot_dist_md <-
 plot_dist_md
 
 plot_dist_md_file_name <- "fig3_dist_md.png"
-cowplot::ggsave(plot = plot_dist_md, filename = plot_dist_md_file_name, device = "png", path = here::here("figs"),
-     scale = 1, width = 22, height = 18, units = "cm", dpi = 600)
+cowplot::ggsave2(plot = plot_dist_md, filename = plot_dist_md_file_name, device = "png", path = here::here("figs"), scale = 1, width = 22, height = 18, units = "cm", dpi = 600)
 
 ```
 
@@ -387,8 +387,9 @@ To complement the previous figure, some percentages are discussed in the body of
 data_plot_barchart %>%
     # arrange(desc(md_desc)) %>%
     select(`Mental Disorder` = md_desc,
-           `Type of assessment` = val_asstype,
-           `Percentage`= lbl) %>%
+           `Type of assessment` = val_type,
+           `Relative N` = number_cases,
+           `Relative %`= lbl) %>%
     knitr::kable(format="html", escape = T, booktabs = TRUE) %>%
     kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
     column_spec(1, bold = T) %>%
@@ -405,17 +406,18 @@ A _line chart_ to show the number of papers per mental disorder and year.
 
 
 ```{r fig4_linechart, echo=FALSE, dpi=600, fig.width=12, fig.height=14, fig.asp=0.65}
-cols_top <- c("Depressive disorders", 
-              "Anxiety disorders", 
-              "Various disorders",
-              "Trauma and\n stressor-related disorders",
-              "Substance-related and\n addictive disorders",
-              "Schizophrenia spectrum and\n other psychotic disorders")
-top <- levels(all_data$md)[1:6]
+# cols_top <- c("Depressive disorders", 
+#               "Anxiety disorders", 
+#               "Various disorders",
+#               "Trauma and stressor-related disorders",
+#               "Substance-related and addictive disorders",
+#               "Schizophrenia spectrum and other psychotic disorders")
+
+md_top <- md_all_ordered[1:6]
 
 data_plot_topmd <- 
     all_data %>%
-      filter(md %in% top) %>%
+      filter(md_desc %in% md_top) %>%
       group_by(md_desc, year) %>%
       summarise(number_cases = n()) %>%
       ungroup() %>%
@@ -425,7 +427,7 @@ data_plot_topmd <-
 #' Add mental disorders with zero cases
 for (y in 2013:2018) {
     md_year <- filter(data_plot_topmd, year==y) %>% select(md_desc)
-    md_dif <- setdiff(cols_top, md_year$md_desc)
+    md_dif <- setdiff(md_top, md_year$md_desc)
     if (length(md_dif) > 0) {
         for (md in md_dif) {
             data_plot_topmd <- add_row(data_plot_topmd, md_desc=md, year=y, number_cases=0)
@@ -434,7 +436,7 @@ for (y in 2013:2018) {
 }
 
 
-data_plot_topmd$md_desc <- forcats::fct_relevel(data_plot_topmd$md_desc, cols_top)
+data_plot_topmd$md_desc <- forcats::fct_relevel(data_plot_topmd$md_desc, md_top)
 brks <- levels(data_plot_topmd$md_desc) 
 
 
@@ -469,7 +471,7 @@ plot_topmd <-
 
 plot_topmd
 plot_file_name <- "fig4_linechart.png"
-ggsave(plot = plot_topmd, filename = plot_file_name, device = "png", path = here::here("figs"),
+cowplot::ggsave2(plot = plot_topmd, filename = plot_file_name, device = "png", path = here::here("figs"),
     scale = 1, width = 20, height = 18, units = "cm", dpi = 600) 
 
 ```
@@ -522,7 +524,7 @@ data_kp_apps <-
     group_by(md_desc) %>%
     summarise(app_ids_merge = paste0(app_ids, collapse = ", ")) 
 
-data_kp_apps$md_desc <- factor(data_kp_apps$md_desc, levels=md_all_ordered)  
+data_kp_apps$md_desc <- forcats::fct_relevel(data_kp_apps$md_desc, md_all_ordered)
 
 
 # options(knitr.kable.NA = '-')
@@ -586,7 +588,7 @@ if (length(md_feat) > 0) {
     }
 }
 
-data_kp_feat$md_desc <- factor(data_kp_feat$md_desc, levels=md_all_ordered)  
+data_kp_feat$md_desc <- forcats::fct_relevel(data_kp_feat$md_desc, md_all_ordered)
 
 ```
 
@@ -664,7 +666,7 @@ if (length(md_anal) > 0) {
     }
 }
 
-data_kp_anal$md_desc <- factor(data_kp_anal$md_desc, levels=md_all_ordered)  
+data_kp_anal$md_desc <- forcats::fct_relevel(data_kp_anal$md_desc, levels=md_all_ordered)  
 
 ```
 
@@ -675,7 +677,8 @@ data_kp_all <-
     bind_rows(data_kp_feat, data_kp_sens, data_kp_anal)
 
 data_kp_all$tech_type <- as_factor(data_kp_all$tech_type)
-#' Replace existing factors levels for figure production
+
+# Replace existing factors levels for figure production
 levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_learn"] <- "Learning"
 levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_prog"] <- "Progress"
 levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_pers"] <- "Personalization"
@@ -787,7 +790,7 @@ kp_bubblechart <-
 kp_bubblechart
 
 kp_file_name <- "fig5_bubble.png"
-ggsave(plot = kp_bubblechart, filename = kp_file_name, device = "png", path = here::here("figs"),
+cowplot::ggsave2(plot = kp_bubblechart, filename = kp_file_name, device = "png", path = here::here("figs"),
     scale = 1, width = 40, height = 25, units = "cm", dpi = 600)
 
 
