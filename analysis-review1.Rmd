@@ -35,6 +35,7 @@ library(forcats)
 library(cowplot)    # publication-ready theme for ggplot2
 library(kableExtra)
 library(scales)
+library(DT)
 
 # library(purrr)
 
@@ -384,6 +385,7 @@ To complement the previous figure, some percentages are discussed in the body of
 
 ```{r stats_assesstype_md, echo=FALSE}
 
+# Table output with Kable 
 data_plot_barchart %>%
     # arrange(desc(md_desc)) %>%
     select(`Mental Disorder` = md_desc,
@@ -394,11 +396,98 @@ data_plot_barchart %>%
     kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
     column_spec(1, bold = T) %>%
     collapse_rows(columns = 1, valign = "top")
+
+
+# Table output with DT
+data_plot_barchart %>%
+  select(`Mental Disorder` = md_desc,
+           `Type of assessment` = val_type,
+           `Relative N` = number_cases,
+           `Relative %`= lbl) %>%
+  datatable(rownames = FALSE, 
+            filter = "top",
+            class = "table-bordered table-condensed hover",
+            extensions = "Buttons",
+            options = list(
+               pageLength = 5, #autoWidth = TRUE,
+               dom = 'Blfrtip',  # https://datatables.net/reference/option/dom
+               buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+            )) %>%
+    formatStyle('Relative N',
+      background = styleColorBar(c(0, data_plot_barchart$number_cases), 'lightblue'),
+      backgroundSize = '98% 55%',
+      backgroundRepeat = 'no-repeat',
+      backgroundPosition = 'center')
+
+# https://datatables.net/extensions/rowgroup/ --> RowGroup
+                           
 ```
 
 
 \newpage
 
+
+### NEW: Table Characteristics of included studies/app 
+
+It responds to the issue [Characteristics of included studies/app](https://github.com/cgranell/apps-treatment-mental-disorders/issues/1]
+
+```{r tab_apps, echo=FALSE}
+data_all_apps <- 
+  all_data %>%
+  select(app_name, md_desc, year, id, fmw_cbt, fmw_wav, fmw_pos, fmw_tra) %>%
+  filter(!is.na(app_name)) %>%
+  # group_by(app_name, md_desc, year) %>%
+  # summarise(number_apps = n()) %>% 
+  arrange(md_desc, year)
+
+# FIXME: all studies vs studies with appname
+# FIXME: same app in different years
+# FIXME: https://rstudio.github.io/DT/010-style.html --> Yes/No values
+# FIXME: https://github.com/renkun-ken/formattable
+
+# a custom table container
+sketch <- 
+  htmltools::withTags(table(
+  class = 'display',
+  thead(
+    tr(
+      th(rowspan = 2, 'APP NAME'),
+      th(rowspan = 2, 'MD CATEGORY'),
+      th(rowspan = 2, 'YEAR'),
+      th(rowspan = 2, 'REF'),
+      th(colspan = 2, 'PSY FRAMEWORK')
+    ),
+    tr(
+      lapply(c('CBT', 'WAV', 'TRA', 'POS'), th)
+    )
+  )
+))
+
+# sketch
+
+data_all_apps %>%
+  select(`APP NAME` = app_name,
+         `MD CATEGORY` = md_desc,
+         `YEAR` = year,
+         `REF`= id,
+         `CBT` = fmw_cbt,
+         `WAV` = fmw_wav,
+         `TRA` = fmw_tra,
+         `POS` = fmw_pos) %>%
+  datatable(container = sketch, rownames = FALSE) %>%
+    formatStyle('CBT',
+      backgroundColor = styleEqual(c("YES", "NO"), c('red', ''))) %>%
+    formatStyle('WAV',
+      backgroundColor = styleEqual(c("YES", "NO"), c('orange', ''))) %>%
+    formatStyle('TRA',
+      backgroundColor = styleEqual(c("YES", "NO"), c('green', ''))) %>%
+    formatStyle('POS',
+      backgroundColor = styleEqual(c("YES", "NO"), c('blue', '')))
+      
+
+```
+
+\newpage
 
 ### Figure 4: Distribution of articles published for the top 6 mental disorders over time.
 
