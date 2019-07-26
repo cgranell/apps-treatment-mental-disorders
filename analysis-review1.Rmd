@@ -455,7 +455,7 @@ sketch <-
       th(rowspan = 2, 'MD CATEGORY'),
       th(rowspan = 2, 'YEAR'),
       th(rowspan = 2, 'REF'),
-      th(colspan = 2, 'PSY FRAMEWORK')
+      th(colspan = 4, 'PSY FRAMEWORK')
     ),
     tr(
       lapply(c('CBT', 'WAV', 'TRA', 'POS'), th)
@@ -474,7 +474,15 @@ data_all_apps %>%
          `WAV` = fmw_wav,
          `TRA` = fmw_tra,
          `POS` = fmw_pos) %>%
-  datatable(container = sketch, rownames = FALSE) %>%
+  datatable(container = sketch, rownames = FALSE, 
+            filter = "top",
+            class = "table-bordered table-condensed hover",
+            extensions = "Buttons",
+            options = list(
+               pageLength = 5, #autoWidth = TRUE,
+               dom = 'Blfrtip',  # https://datatables.net/reference/option/dom
+               buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+            )) %>%
     formatStyle('CBT',
       backgroundColor = styleEqual(c("YES", "NO"), c('red', ''))) %>%
     formatStyle('WAV',
