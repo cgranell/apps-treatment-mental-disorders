@@ -251,6 +251,7 @@ data_tbl_assesstype <-
 
 data_tbl_assesstype$val_type <- forcats::fct_relevel(data_tbl_assesstype$val_type, assessment_type) 
 
+# Table output with Kable
 # options(knitr.kable.NA = '-')
 data_tbl_assesstype %>%
     arrange(val_type) %>%
@@ -265,6 +266,24 @@ data_tbl_assesstype %>%
     column_spec(1, bold = T)
 
 
+
+# Table output with DT
+data_tbl_assesstype %>%
+    arrange(val_type) %>%
+    select(`Assessment type` = val_type,
+           `N (%)` = n_lbl,
+           `RCT - N (%)` = n_lbl.rct,
+           `PILOT RCT - N (%)` = n_lbl.pilot) %>%
+    datatable(rownames = FALSE, 
+            filter = "top",
+            class = "table-bordered table-condensed hover",
+            extensions = c("Buttons"),
+            options = list(
+               pageLength = 5, #autoWidth = TRUE,
+               dom = 'Blfrtip',  # https://datatables.net/reference/option/dom
+               buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+            ))  %>%
+      formatStyle('Assessment type',  fontWeight = 'bold')
 ```
 
 
