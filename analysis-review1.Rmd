@@ -463,7 +463,7 @@ data_plot_barchart %>%
 
 ### NEW: Table Characteristics of included studies/app 
 
-It responds to the issue [Characteristics of included studies/app](https://github.com/cgranell/apps-treatment-mental-disorders/issues/1]
+It responds to the issue [Characteristics of included studies/app](https://github.com/cgranell/apps-treatment-mental-disorders/issues/1)
 
 ```{r tab_apps, echo=FALSE}
 data_all_apps <- 
@@ -476,7 +476,7 @@ data_all_apps <-
 
 # FIXME: all studies (w/o appname) vs studies with appname
 # FIXME: same app in different years. How to manage it
-# FIXME: ux_gui is not significatve. Group the other "ux" variables under "UX type"
+# FIXME: ux_gui is not significative. Group the other "ux" variables under "UX type"
 # FIXME: https://rstudio.github.io/DT/010-style.html --> Yes/No values
 # FIXME: https://github.com/renkun-ken/formattable
 
@@ -668,6 +668,7 @@ data_kp_apps <-
 data_kp_apps$md_desc <- forcats::fct_relevel(data_kp_apps$md_desc, md_all_ordered)
 
 
+# Table output with Kable 
 # options(knitr.kable.NA = '-')
 data_kp_apps %>%
     arrange(desc(md_desc)) %>%
@@ -679,6 +680,24 @@ data_kp_apps %>%
     kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
     column_spec(1, bold = T) %>%
     collapse_rows(columns = 1, valign = "top") 
+
+
+# Table output with DT 
+data_kp_apps %>%
+    arrange(desc(md_desc)) %>%
+    select(`Mental Disorder` = md_desc,
+           `References by app` = app_ids_merge) %>%
+  datatable(rownames = FALSE, 
+            filter = "top",
+            class = "table-bordered table-condensed hover",
+            extensions = "Buttons",
+            options = list(
+               pageLength = 5, #autoWidth = TRUE,
+               dom = 'Blfrtip',  # https://datatables.net/reference/option/dom
+               buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+            )) %>%
+      formatStyle('Mental Disorder',  fontWeight = 'bold')
+      
 
 ```
 
