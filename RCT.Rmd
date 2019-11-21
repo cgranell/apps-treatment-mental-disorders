@@ -1,0 +1,125 @@
+---
+title: 'Analysis and visualisations for "Smartphone apps for the treatment of mental disorders: a systematic review"'
+author: "Carlos Granell, Juana Breton-Lopez, Sven Casteleyn, Diana Castilla, Laura Diaz, Adriana Mira, Ignacio Miralles, William Van Woensel"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    df_print: paged
+    toc: no
+urlcolor: blue    
+---
+
+```{r load_libraries, echo=FALSE, message=FALSE, warning=FALSE}
+library(gt.emidata)
+
+library(here)
+library(tidyverse)
+library(forcats)
+library(cowplot)    # publication-ready theme for ggplot2
+library(kableExtra)
+library(scales)
+library(DT)
+library(knitr)
+#slibrary(RColorBrewer)
+
+```
+
+```{r create_data, echo=FALSE}
+# FIXME: temporal solution. Create all_data.rda/csv instead
+all_data <- 
+  papers2018 %>% 
+  inner_join(papers2018_tech, by="id") %>%
+  inner_join(papers2018_psy, by="id") %>%
+  arrange(id)
+
+```
+
+
+
+```{r all_data, echo=FALSE}
+# FIXME: local dataset
+#load(file = here("all_data.rda"))
+
+n_md <- nlevels(all_data$md_desc)
+n_papers = nrow(all_data)
+
+assessment_type <- c("NO ASSESSMENT", "USABILITY/UX", "EFFECT AND USABILITY/UX", "EFFECT")
+assessment_type_n <- sapply(assessment_type, FUN = function(x) {nrow(filter(all_data, val_type == x))})
+
+n_assessment_yes <- n_papers - assessment_type_n[[1]] 
+
+# Keep the same order of mental disorder for all charts 
+temp_for_order <- 
+    all_data %>% 
+    group_by(md_id, md_desc) %>%
+    summarise(number_cases = n()) %>%
+    mutate(proportion = number_cases/n_papers) %>% 
+    arrange(desc(proportion), md_id) 
+
+# convert to factor to retain sorted order of mental disorders 
+temp_for_order$md_desc <- factor(temp_for_order$md_desc, levels=unique(temp_for_order$md_desc))  
+
+# Save ordered mental disorders
+md_all_ordered <- levels(temp_for_order$md_desc)
+
+
+# Adjust labels length for figures production, based on the order of MD given in 'md_all_ordered'
+md_lbl_production <- c(
+  "Depressive disorders", 
+  "Various disorders",
+  "Anxiety disorders",
+  "Substance-related and\n addictive disorders",
+  "Schizophrenia spectrum and\n other psychotic disorders",
+  "Trauma and\n stressor-related disorders",
+  "Suicidal behavior disorder/\nnonsuicidal self-injury",
+  "Comorbid disorders",
+  "Bipolar and related disorders",
+  "Obsessive-Compulsive and\n related disorders",
+  "Neurodevelopmental disorders",
+  "Feeding and eating disorders",
+  "Sleep-wake disorders",
+  "Personality disorders",
+  "Major and Mild Neurocognitive Disorders")    
+
+
+default_palette <- c("NO ASSESSMENT"="#AF8DC3", "USABILITY/UX"="#D9F0D3", "EFFECT AND USABILITY/UX"="#7FBF7B", "EFFECT"="#1B7837")
+```
+
+
+### NEW Table: RCT/Pilot RCY and Resutls 
+
+```{r tab_rct, echo=FALSE}
+data_tbl_rct <- 
+    all_data %>%
+    select(id, val_edrct, val_res) %>%
+    filter(val_edrct %in% c("RCT", "PILOT RCT")) %>%
+    arrange(id)
+
+# data_tbl_rct %>%
+#     select(`ID` = id,
+#            `RCT or Pilot RCT` = val_edrct,
+#            `Resutls` = val_res) %>%
+#     knitr::kable(format="html", escape = T, booktabs = TRUE,    
+#           caption = "RCT table") %>%
+#     kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+#     column_spec(1, bold = T)
+
+
+data_tbl_rct %>%
+    select(`ID` = id,
+           `RCT or Pilot RCT` = val_edrct,
+           `Resutls` = val_res) %>%
+    datatable(rownames = FALSE, 
+            filter = "top",
+            class = "table-bordered table-condensed hover",
+            extensions = c("Buttons"),
+            options = list(
+               pageLength = 5, #autoWidth = TRUE,
+               dom = 'Blfrtip',  # https://datatables.net/reference/option/dom
+               buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+            ))  %>%
+      formatStyle('ID',  fontWeight = 'bold')
+
+
+```
+
