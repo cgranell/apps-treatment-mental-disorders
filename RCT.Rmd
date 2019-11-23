@@ -1,11 +1,10 @@
 ---
 title: 'Analysis and visualisations for "Smartphone apps for the treatment of mental disorders: a systematic review"'
-author: "Carlos Granell, Juana Breton-Lopez, Sven Casteleyn, Diana Castilla, Laura Diaz, Adriana Mira, Ignacio Miralles, William Van Woensel"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
     df_print: paged
-    toc: no
+    toc: yes
 urlcolor: blue    
 ---
 
@@ -85,15 +84,16 @@ md_lbl_production <- c(
 default_palette <- c("NO ASSESSMENT"="#AF8DC3", "USABILITY/UX"="#D9F0D3", "EFFECT AND USABILITY/UX"="#7FBF7B", "EFFECT"="#1B7837")
 ```
 
+## NEW TABLES
 
-### NEW Table: RCT/Pilot RCY and Resutls 
+### RCT/Pilot RCT, sample, experimental conditions, resutls 
 
 ```{r tab_rct, echo=FALSE}
 data_tbl_rct <- 
     all_data %>%
-    select(id, val_edrct, val_res) %>%
+    select(id, year, app_name, md_desc, val_edrct, val_n, val_ec, val_res, val_n2) %>%
     filter(val_edrct %in% c("RCT", "PILOT RCT")) %>%
-    arrange(id)
+    arrange(year, id)
 
 # data_tbl_rct %>%
 #     select(`ID` = id,
@@ -107,14 +107,20 @@ data_tbl_rct <-
 
 data_tbl_rct %>%
     select(`ID` = id,
-           `RCT or Pilot RCT` = val_edrct,
-           `Resutls` = val_res) %>%
+           `Year` = year,
+           `App name` = app_name,
+           `MD` = md_desc,
+           `Study type` = val_edrct,
+           `Sample (N)` = val_n,
+           `Exp conditions` = val_ec,
+           `Results` = val_res,
+           `Sample (Comments)` = val_n2) %>%
     datatable(rownames = FALSE, 
             filter = "top",
             class = "table-bordered table-condensed hover",
             extensions = c("Buttons"),
             options = list(
-               pageLength = 5, #autoWidth = TRUE,
+               pageLength = 15, #autoWidth = TRUE,
                dom = 'Blfrtip',  # https://datatables.net/reference/option/dom
                buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
             ))  %>%
