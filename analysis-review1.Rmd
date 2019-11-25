@@ -1,5 +1,5 @@
 ---
-title: 'Analysis and visualisations for "Smartphone apps for the treatment of mental disorders: a systematic review"'
+title: 'Analysis and visualisations for "Smartphone apps for the treatment of mental disorders: a systematic review" (First Review)'
 author: "Carlos Granell, Juana Breton-Lopez, Sven Casteleyn, Diana Castilla, Laura Diaz, Adriana Mira, Ignacio Miralles, William Van Woensel"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
@@ -42,7 +42,7 @@ library(knitr)
 ```
 
 
-```{r session_info, echo=FALSE}
+```{r session_info, echo=FALSE, message=FALSE, warning=FALSE}
 devtools::session_info(include_base = TRUE)
 ```
 
@@ -208,35 +208,51 @@ cowplot::ggsave2(plot = plot_tempdist, filename = plot_tempdist_file_name, devic
 
 \newpage
 
-### NEW Table RCT
+### NEW TABLE: Key variables (sample, experimental conditions, resutls, etc) of 'RCT' or 'pilot RCT' studies only. 
+
+_NOTE_: In response to the comment **G.26** 'Characteristics of incldued studies'.
 
 ```{r tab_rct, echo=FALSE}
 data_tbl_rct <- 
     all_data %>%
-    select(id, val_edrct, val_res) %>%
+    select(id, year, app_name, md_desc, val_edrct, val_n, val_ec, val_res, val_n2) %>%
     filter(val_edrct %in% c("RCT", "PILOT RCT")) %>%
-    arrange(id)
+    arrange(year, id)
 
+# Table output with {kable}
+# data_tbl_rct %>%
+#     select(`ID` = id,
+#            `Year` = year,
+#            `App name` = app_name,
+#            `MD` = md_desc,
+#            `Study type` = val_edrct,
+#            `Sample (N)` = val_n,
+#            `Exp conditions` = val_ec,
+#            `Results` = val_res,
+#            `Sample (Comments)` = val_n2) %>%
+#     knitr::kable(format="html", escape = T, booktabs = TRUE,
+#           caption = "RCT table") %>%
+#     kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+#     column_spec(1, bold = T)
+
+
+# Table output using {datatable}
 data_tbl_rct %>%
     select(`ID` = id,
-           `RCT or Pilot RCT` = val_edrct,
-           `Resutls` = val_res) %>%
-    knitr::kable(format="html", escape = T, booktabs = TRUE,    
-          caption = "RCT table") %>%
-    kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
-    column_spec(1, bold = T)
-
-
-data_tbl_rct %>%
-    select(`ID` = id,
-           `RCT or Pilot RCT` = val_edrct,
-           `Resutls` = val_res) %>%
+           `Year` = year,
+           `App name` = app_name,
+           `MD` = md_desc,
+           `Study type` = val_edrct,
+           `Sample (N)` = val_n,
+           `Exp conditions` = val_ec,
+           `Results` = val_res,
+           `Sample (Comments)` = val_n2) %>%
     datatable(rownames = FALSE, 
             filter = "top",
             class = "table-bordered table-condensed hover",
             extensions = c("Buttons"),
             options = list(
-               pageLength = 5, #autoWidth = TRUE,
+               pageLength = 15, #autoWidth = TRUE,
                dom = 'Blfrtip',  # https://datatables.net/reference/option/dom
                buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
             ))  %>%
@@ -245,8 +261,9 @@ data_tbl_rct %>%
 
 ```
 
-### NEW: Table Evolution of assessment types 
+### NEW TABLE: Evolution of assessment types 
 
+_NOTE_: In response to the comment **G.18** "The authors may consider presenting the data in the 'Evolution of research and assessment' paragraph using a table instead".  The following table can simplify the last paragragh of the section 'Evolution of research and assessment' 
 
 ```{r tab_assessmenttypes, echo=FALSE}
 
@@ -283,7 +300,7 @@ data_tbl_assesstype <-
 data_tbl_assesstype$val_type <- forcats::fct_relevel(data_tbl_assesstype$val_type, assessment_type) 
 
 # Table output with Kable
-# options(knitr.kable.NA = '-')
+options(knitr.kable.NA = '0 (0%)')
 data_tbl_assesstype %>%
     arrange(val_type) %>%
     select(`Assessment type` = val_type,
@@ -291,30 +308,29 @@ data_tbl_assesstype %>%
            `RCT - N (%)` = n_lbl.rct,
            `PILOT RCT - N (%)` = n_lbl.pilot) %>%
     knitr::kable(format="html", escape = T, booktabs = TRUE,    
-          caption = paste0("Distribution of assessment type. ", 
-                            "'NA' is Not Applicable/No Data")) %>%
+          caption = "Distribution of assessment type") %>%
     kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
     column_spec(1, bold = T)
 
 
 
 # Table output with DT
-data_tbl_assesstype %>%
-    arrange(val_type) %>%
-    select(`Assessment type` = val_type,
-           `N (%)` = n_lbl,
-           `RCT - N (%)` = n_lbl.rct,
-           `PILOT RCT - N (%)` = n_lbl.pilot) %>%
-    datatable(rownames = FALSE, 
-            filter = "top",
-            class = "table-bordered table-condensed hover",
-            extensions = c("Buttons"),
-            options = list(
-               pageLength = 5, #autoWidth = TRUE,
-               dom = 'Blfrtip',  # https://datatables.net/reference/option/dom
-               buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
-            ))  %>%
-      formatStyle('Assessment type',  fontWeight = 'bold')
+# data_tbl_assesstype %>%
+#     arrange(val_type) %>%
+#     select(`Assessment type` = val_type,
+#            `N (%)` = n_lbl,
+#            `RCT - N (%)` = n_lbl.rct,
+#            `PILOT RCT - N (%)` = n_lbl.pilot) %>%
+#     datatable(rownames = FALSE, 
+#             filter = "top",
+#             class = "table-bordered table-condensed hover",
+#             extensions = c("Buttons"),
+#             options = list(
+#                pageLength = 5, #autoWidth = TRUE,
+#                dom = 'Blfrtip',  # https://datatables.net/reference/option/dom
+#                buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+#             ))  %>%
+#       formatStyle('Assessment type',  fontWeight = 'bold')
 ```
 
 
@@ -445,7 +461,7 @@ cowplot::ggsave2(plot = plot_dist_md, filename = plot_dist_md_file_name, device 
 ```
 
 
-To complement the previous figure, some percentages are discussed in the body of the article which are included in the following table. Note: the table as it is does not appear on the paper.
+To complement the previous figure, some percentages are discussed in the section 'Relation between assessment types and mental disorder' which are included in the following.
 
 ```{r stats_assesstype_md, echo=FALSE}
 
@@ -454,7 +470,7 @@ data_plot_barchart %>%
     # arrange(desc(md_desc)) %>%
     select(`Mental Disorder` = md_desc,
            `Type of assessment` = val_type,
-           `Relative N` = number_cases,
+           `Number of studies` = number_cases,
            `Relative %`= lbl) %>%
     knitr::kable(format="html", escape = T, booktabs = TRUE) %>%
     kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
@@ -463,26 +479,26 @@ data_plot_barchart %>%
 
 
 # Table output with DT
-data_plot_barchart %>%
-  select(`Mental Disorder` = md_desc,
-           `Type of assessment` = val_type,
-           `Relative N` = number_cases,
-           `Relative %`= lbl) %>%
-  datatable(rownames = FALSE, 
-            filter = "top",
-            class = "table-bordered table-condensed hover",
-            extensions = c("Buttons", "RowGroup"),
-            options = list(
-               pageLength = 5, #autoWidth = TRUE,
-               dom = 'Blfrtip',  # https://datatables.net/reference/option/dom
-               buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
-               rowGroup=list(dataSrc=0)
-            )) %>%
-    formatStyle('Relative N',
-      background = styleColorBar(c(0, data_plot_barchart$number_cases), 'lightblue'),
-      backgroundSize = '98% 55%',
-      backgroundRepeat = 'no-repeat',
-      backgroundPosition = 'center')
+# data_plot_barchart %>%
+#   select(`Mental Disorder` = md_desc,
+#            `Type of assessment` = val_type,
+#            `Number of studies` = number_cases,
+#            `Relative %`= lbl) %>%
+#   datatable(rownames = FALSE, 
+#             filter = "top",
+#             class = "table-bordered table-condensed hover",
+#             extensions = c("Buttons", "RowGroup"),
+#             options = list(
+#                pageLength = 5, #autoWidth = TRUE,
+#                dom = 'Blfrtip',  # https://datatables.net/reference/option/dom
+#                buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+#                rowGroup=list(dataSrc=0)
+#             )) %>%
+#     formatStyle('Number of studies',
+#       background = styleColorBar(c(0, data_plot_barchart$number_cases), 'lightblue'),
+#       backgroundSize = '98% 55%',
+#       backgroundRepeat = 'no-repeat',
+#       backgroundPosition = 'center')
 
 # https://datatables.net/extensions/rowgroup/ --> RowGroup
                            
@@ -492,14 +508,15 @@ data_plot_barchart %>%
 \newpage
 
 
-### NEW: Table Characteristics of included studies/app 
+### NEW TABLE. Breakdown of treatment modalities which show psychological framework per study/app 
 
-It responds to the issue [Characteristics of included studies/app](https://github.com/cgranell/apps-treatment-mental-disorders/issues/1)
+_NOTE_: In respond to the comment **F.2** 'Breakdown of treatment modalities'
 
 ```{r tab_apps, echo=FALSE}
 data_all_apps <- 
   all_data %>%
-  select(app_name, md_desc, year, id, fmw_cbt, fmw_wav, fmw_pos, fmw_tra, ux_gui, ux_gesture, ux_voice, ux_text) %>%
+  select(app_name, md_desc, year, id, fmw_cbt, fmw_wav, fmw_pos, fmw_tra) %>%
+  # select(app_name, md_desc, year, id, fmw_cbt, fmw_wav, fmw_pos, fmw_tra, ux_gui, ux_gesture, ux_voice, ux_text) %>%
   filter(!is.na(app_name)) %>%
   # group_by(app_name, md_desc, year) %>%
   # summarise(number_apps = n()) %>% 
@@ -507,7 +524,6 @@ data_all_apps <-
 
 # FIXME: all studies (w/o appname) vs studies with appname
 # FIXME: same app in different years. How to manage it
-# FIXME: ux_gui is not significative. Group the other "ux" variables under "UX type"
 # FIXME: https://rstudio.github.io/DT/010-style.html --> Yes/No values
 # FIXME: https://github.com/renkun-ken/formattable
 
@@ -517,34 +533,33 @@ sketch <-
   class = 'display',
   thead(
     tr(
+      th(rowspan = 2, 'Mental Disorder'),
       th(rowspan = 2, 'APP NAME'),
-      th(rowspan = 2, 'MD CATEGORY'),
       th(rowspan = 2, 'YEAR'),
-      th(rowspan = 2, 'REF'),
-      th(colspan = 4, 'PSY FRAMEWORK'),
-      th(colspan = 3, 'UX')
+      th(rowspan = 2, 'ID'),
+      th(colspan = 4, 'PSY FRAMEWORK')
+      # th(colspan = 3, 'UX')
     ),
     tr(
-      lapply(c('CBT', 'WAV', 'TRA', 'POS'), th),
-      lapply(c('GES', 'VOI', 'TXT'), th)
+      lapply(c('CBT', 'WAV', 'TRA', 'POS'), th)
+      # lapply(c('GES', 'VOI', 'TXT'), th)
     )
   )
 ))
 
 # sketch
-
 data_all_apps %>%
-  select(`APP NAME` = app_name,
-         `MD CATEGORY` = md_desc,
+  select(`Mental Disorder` = md_desc,
+         `APP NAME` = app_name,
          `YEAR` = year,
          `REF`= id,
          `CBT` = fmw_cbt,
          `WAV` = fmw_wav,
          `TRA` = fmw_tra,
-         `POS` = fmw_pos,
-         `GES` = ux_gesture,
-         `VOI` = ux_voice,
-         `TXT` = ux_text) %>%
+         `POS` = fmw_pos) %>%
+         # `GES` = ux_gesture,
+         # `VOI` = ux_voice,
+         # `TXT` = ux_text) %>%
   datatable(container = sketch, rownames = FALSE, 
             filter = "top",
             class = "table-bordered table-condensed hover",
@@ -555,21 +570,21 @@ data_all_apps %>%
                buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
             )) %>%
     formatStyle('CBT',
-      backgroundColor = styleEqual(c("YES", "NO"), c('red', ''))) %>%
+      backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', 'lightgray'))) %>%
     formatStyle('WAV',
-      backgroundColor = styleEqual(c("YES", "NO"), c('orange', ''))) %>%
+      backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', 'lightgray'))) %>%
     formatStyle('TRA',
-      backgroundColor = styleEqual(c("YES", "NO"), c('yellow', ''))) %>%
+      backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', ''))) %>%
     formatStyle('POS',
-      backgroundColor = styleEqual(c("YES", "NO"), c('blue', ''))) %>%
+      backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', '')))
     # formatStyle('GUI',
     #   backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', ''))) %>%
-    formatStyle('GES',
-      backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', ''))) %>%
-    formatStyle('VOI',
-      backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', ''))) %>%
-    formatStyle('TXT',
-      backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', '')))
+    # formatStyle('GES',
+    #   backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', ''))) %>%
+    # formatStyle('VOI',
+    #   backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', ''))) %>%
+    # formatStyle('TXT',
+    #   backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', '')))
   
       
 
@@ -654,7 +669,7 @@ cowplot::ggsave2(plot = plot_topmd, filename = plot_file_name, device = "png", p
 
 ### Table 1: Mental disorders and the studies targeting them: NA = app name not available/not mentioned.
 
-A tabular, compact distribution of papers (apps) per mental disorder, grouping the references per app. The number(s) in brackets next to the app name is the reference(s) in which the app is mentioned. In the table below, these references are internal identifiers instead. 
+A tabular, compact distribution of apps per mental disorder, grouping the references tha point the same app together. The number(s) in brackets next to the app name is the reference(s) in which the app is mentioned. In the table below, these references are internal identifiers instead. 
 
 
 ```{r tab1, echo=FALSE}
@@ -714,20 +729,20 @@ data_kp_apps %>%
 
 
 # Table output with DT 
-data_kp_apps %>%
-    arrange(desc(md_desc)) %>%
-    select(`Mental Disorder` = md_desc,
-           `References by app` = app_ids_merge) %>%
-  datatable(rownames = FALSE, 
-            filter = "top",
-            class = "table-bordered table-condensed hover",
-            extensions = "Buttons",
-            options = list(
-               pageLength = 5, #autoWidth = TRUE,
-               dom = 'Blfrtip',  # https://datatables.net/reference/option/dom
-               buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
-            )) %>%
-      formatStyle('Mental Disorder',  fontWeight = 'bold')
+# data_kp_apps %>%
+#     arrange(desc(md_desc)) %>%
+#     select(`Mental Disorder` = md_desc,
+#            `References by app` = app_ids_merge) %>%
+#   datatable(rownames = FALSE, 
+#             filter = "top",
+#             class = "table-bordered table-condensed hover",
+#             extensions = "Buttons",
+#             options = list(
+#                pageLength = 5, #autoWidth = TRUE,
+#                dom = 'Blfrtip',  # https://datatables.net/reference/option/dom
+#                buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+#             )) %>%
+#       formatStyle('Mental Disorder',  fontWeight = 'bold')
       
 
 ```
@@ -941,7 +956,7 @@ kp_bubblechart <-
     theme_minimal() +
     theme(axis.text.x=element_text(angle=60, size=11, hjust=1, color=lbls_colors),
           axis.text.y=element_text(size=11)) +
-    # Legend: Top-Right Inside the Plot") 
+    # Legend: Top-Right Inside the Plot
     theme(legend.title = element_text(size=9),
           legend.justification = c('right', 'top'),
           legend.position=c(1, 0.90),
@@ -980,7 +995,7 @@ kp_bubblechart <-
 
 kp_bubblechart
 
-kp_file_name <- "fig5_bubble_NEW.png"
+kp_file_name <- "fig5_bubble.png"
 cowplot::ggsave2(plot = kp_bubblechart, filename = kp_file_name, device = "png", path = here::here("figs"),
     scale = 1, width = 40, height = 28, units = "cm", dpi = 600)
 
