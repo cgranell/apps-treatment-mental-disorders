@@ -264,7 +264,6 @@ data_tbl_rct %>%
 ### NEW TABLE: Evolution of assessment types 
 
 _NOTE_: In response to the comment **G.18** "The authors may consider presenting the data in the 'Evolution of research and assessment' paragraph using a table instead".  The following table simplifies the last paragragh of the section 'Evolution of research and assessment'.
-_FIXME_: One paper (id=430) is marked as "NO ASSESSMENT" and "RCT". Check it out! 
 
 ```{r tab_assessmenttypes, echo=FALSE}
 
