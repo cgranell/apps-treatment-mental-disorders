@@ -42,8 +42,8 @@ library(knitr)
 ```
 
 
-```{r session_info, echo=FALSE, message=FALSE, warning=FALSE}
-devtools::session_info(include_base = TRUE)
+```{r session_info, echo=FALSE}
+# devtools::session_info(include_base = TRUE)
 ```
 
 This document is versioned in a public [git](https://git-scm.com/) repo: [https://github.com/cgranell/apps-treatment-mental-disorders](https://github.com/cgranell/apps-treatment-mental-disorders).
@@ -210,7 +210,7 @@ cowplot::ggsave2(plot = plot_tempdist, filename = plot_tempdist_file_name, devic
 
 ### NEW TABLE: Key variables (sample, experimental conditions, resutls, etc) of 'RCT' or 'pilot RCT' studies only. 
 
-_NOTE_: In response to the comment **G.26** 'Characteristics of incldued studies'.
+_NOTE_: In response to the comment **G.26** 'Characteristics of included studies'.
 
 ```{r tab_rct, echo=FALSE}
 data_tbl_rct <- 
@@ -252,7 +252,7 @@ data_tbl_rct %>%
             class = "table-bordered table-condensed hover",
             extensions = c("Buttons"),
             options = list(
-               pageLength = 15, #autoWidth = TRUE,
+               pageLength = 5, #autoWidth = TRUE,
                dom = 'Blfrtip',  # https://datatables.net/reference/option/dom
                buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
             ))  %>%
@@ -263,7 +263,8 @@ data_tbl_rct %>%
 
 ### NEW TABLE: Evolution of assessment types 
 
-_NOTE_: In response to the comment **G.18** "The authors may consider presenting the data in the 'Evolution of research and assessment' paragraph using a table instead".  The following table can simplify the last paragragh of the section 'Evolution of research and assessment' 
+_NOTE_: In response to the comment **G.18** "The authors may consider presenting the data in the 'Evolution of research and assessment' paragraph using a table instead".  The following table simplifies the last paragragh of the section 'Evolution of research and assessment'.
+_FIXME_: One paper (id=430) is marked as "NO ASSESSMENT" and "RCT". Check it out! 
 
 ```{r tab_assessmenttypes, echo=FALSE}
 
@@ -461,7 +462,7 @@ cowplot::ggsave2(plot = plot_dist_md, filename = plot_dist_md_file_name, device 
 ```
 
 
-To complement the previous figure, some percentages are discussed in the section 'Relation between assessment types and mental disorder' which are included in the following.
+To complement the previous figure, some percentages are discussed in the section 'Relation between assessment types and mental disorder' which are included in the following table (that's not included in the paper).
 
 ```{r stats_assesstype_md, echo=FALSE}
 
@@ -508,9 +509,11 @@ data_plot_barchart %>%
 \newpage
 
 
-### NEW TABLE. Breakdown of treatment modalities which show psychological framework per study/app 
+### NEW TABLE. Breakdown of treatment modalities
 
-_NOTE_: In respond to the comment **F.2** 'Breakdown of treatment modalities'
+_NOTE_: In respond to the comment **F.2** 'Breakdown of treatment modalities' to show psychological framework per study/app. Only studies with app names are included (137). So, 21 are excluded. 
+_FIXME_: Do we include studies without app name (21)?
+
 
 ```{r tab_apps, echo=FALSE}
 data_all_apps <- 
@@ -522,7 +525,7 @@ data_all_apps <-
   # summarise(number_apps = n()) %>% 
   arrange(md_desc, year)
 
-# FIXME: all studies (w/o appname) vs studies with appname
+# FIXME: all studies (w/o appname) vs studies with appname (now)
 # FIXME: same app in different years. How to manage it
 # FIXME: https://rstudio.github.io/DT/010-style.html --> Yes/No values
 # FIXME: https://github.com/renkun-ken/formattable
@@ -574,9 +577,9 @@ data_all_apps %>%
     formatStyle('WAV',
       backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', 'lightgray'))) %>%
     formatStyle('TRA',
-      backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', ''))) %>%
+      backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', 'lightgray'))) %>%
     formatStyle('POS',
-      backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', '')))
+      backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', 'lightgray')))
     # formatStyle('GUI',
     #   backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', ''))) %>%
     # formatStyle('GES',
