@@ -471,8 +471,8 @@ data_plot_barchart %>%
     # arrange(desc(md_desc)) %>%
     select(`Mental Disorder` = md_desc,
            `Type of assessment` = val_type,
-           `Number of studies` = number_cases,
-           `Relative %`= lbl) %>%
+           `Studies (N)` = number_cases,
+           `Studies (%)`= lbl) %>%
     knitr::kable(format="html", escape = T, booktabs = TRUE) %>%
     kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
     column_spec(1, bold = T) %>%
@@ -483,8 +483,8 @@ data_plot_barchart %>%
 # data_plot_barchart %>%
 #   select(`Mental Disorder` = md_desc,
 #            `Type of assessment` = val_type,
-#            `Number of studies` = number_cases,
-#            `Relative %`= lbl) %>%
+#            `Studies (N)` = number_cases,
+#            `Studies (%)`= lbl) %>%
 #   datatable(rownames = FALSE, 
 #             filter = "top",
 #             class = "table-bordered table-condensed hover",
@@ -495,7 +495,7 @@ data_plot_barchart %>%
 #                buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
 #                rowGroup=list(dataSrc=0)
 #             )) %>%
-#     formatStyle('Number of studies',
+#     formatStyle('Studies (N)',
 #       background = styleColorBar(c(0, data_plot_barchart$number_cases), 'lightblue'),
 #       backgroundSize = '98% 55%',
 #       backgroundRepeat = 'no-repeat',
