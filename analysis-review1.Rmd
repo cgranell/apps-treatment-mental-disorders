@@ -510,8 +510,7 @@ data_plot_barchart %>%
 
 ### NEW TABLE. Breakdown of treatment modalities
 
-_NOTE_: In respond to the comment **F.2** 'Breakdown of treatment modalities' to show psychological framework per study/app. Only studies with app names are included (137). So, 21 are excluded. 
-_FIXME_: Do we include studies without app name (21)?
+_NOTE_: In respond to the comment **F.2** 'Breakdown of treatment modalities' to show psychological framework per study (ALL)
 
 
 ```{r tab_apps, echo=FALSE}
@@ -519,7 +518,7 @@ data_all_apps <-
   all_data %>%
   select(app_name, md_desc, year, id, fmw_cbt, fmw_wav, fmw_pos, fmw_tra) %>%
   # select(app_name, md_desc, year, id, fmw_cbt, fmw_wav, fmw_pos, fmw_tra, ux_gui, ux_gesture, ux_voice, ux_text) %>%
-  filter(!is.na(app_name)) %>%
+  # filter(!is.na(app_name)) %>%
   # group_by(app_name, md_desc, year) %>%
   # summarise(number_apps = n()) %>% 
   arrange(md_desc, year)
@@ -591,6 +590,53 @@ data_all_apps %>%
       
 
 ```
+
+
+\newpage
+
+
+### NEW DATA: Apps in multiple papers/studies
+
+_NOTE_: In respond to the comment **A.14** 'Percentage of apps having been studied in multiple articles'
+
+```{r tab_apps_in_many_papers, echo=FALSE}
+
+data_all_apps <- 
+  all_data %>%
+  select(app_name, md_desc, year, id) %>%
+  filter(!is.na(app_name)) %>%
+  arrange(md_desc, year)
+
+data_apps_in_papers <- 
+  all_data %>%
+  select(app_name, md_desc, year, id) %>%
+  filter(!is.na(app_name)) %>%
+  group_by(app_name, md_desc) %>%
+  summarise(number_apps = n()) %>% 
+  arrange(md_desc, app_name)
+
+apps_in_multiple_papers <-
+  data_apps_in_papers %>%
+  filter(number_apps > 1) %>%
+  arrange(md_desc, app_name)
+
+apps_in_2_papers <- nrow(filter(data_apps_in_papers, number_apps == 2))
+
+app_in_multiple_md <-
+  data_apps_in_papers %>% 
+  filter(app_name %in% c("FOCUS", "iBobbly", "SmartCAT")) %>%
+  arrange(app_name, md_desc)
+
+```
+
+Out of N=`r n_papers`, there are `r nrow(data_all_apps)` studies with app names. However, there are `r nrow(data_apps_in_papers)` unique apps. The unique apps follow a long tail distribution, since `r nrow(data_apps_in_papers) - nrow(apps_in_multiple_papers)` appear only once, while `r nrow(apps_in_multiple_papers)` apps appear in two or more studies, being two studies the most frequent case (`r apps_in_2_papers`) and apps in 3 or more studies occurs in only `r nrow(apps_in_multiple_papers) - apps_in_2_papers` cases. In summary, the percentage of apps having been studied in multiple articles is `r nrow(data_apps_in_papers)` / `r nrow(apps_in_multiple_papers)` **(`r percent(nrow(apps_in_multiple_papers)/nrow(data_all_apps))`)**. 
+
+Note also that **`r length(unique(app_in_multiple_md$app_name))` apps are classified in two categories of mental disorders**.
+
+```{r echo=FALSE}
+head(app_in_multiple_md)
+```
+
 
 \newpage
 
@@ -748,7 +794,6 @@ data_kp_apps %>%
       
 
 ```
-
 
 
 \newpage
