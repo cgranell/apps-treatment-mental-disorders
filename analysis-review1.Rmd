@@ -799,6 +799,45 @@ data_kp_apps %>%
 \newpage
 
 
+### NEW TABLE: Alternative to TABLE 1. 
+
+_NOTE_: In response to the comment **G.26** 'Characteristics of included studies'. It adds psychological framework data per study to the big table. In production (manual formating), the table can get more compact, all "NO" can be deleted (empty cell instead), and "YES" can be substituted by coloring the cell depending on the psychological approach, as in the example I provided.
+
+```{r tab1bis, echo=FALSE}
+data_kp_apps <- 
+    all_data %>%
+    select(md_desc, app_name, id, fmw_cbt, fmw_wav, fmw_tra, fmw_pos) %>%
+  
+    # group_by(md_desc, app_name) %>%
+    # summarise(number_apps = n()) %>% 
+    arrange(md_desc, app_name)
+
+
+data_kp_apps$md_desc <- forcats::fct_relevel(data_kp_apps$md_desc, md_all_ordered)
+
+options(knitr.kable.NA = 'NA')
+data_kp_apps %>%
+    arrange(desc(md_desc)) %>%
+    select(`Mental Disorder` = md_desc,
+           `App name` = app_name, 
+           `Ref` = id,  
+           `CBT` = fmw_cbt, 
+           `WAV` = fmw_wav, 
+           `TRA` = fmw_tra, 
+           `POS` = fmw_pos) %>%
+    knitr::kable(format="html", escape = T, booktabs = TRUE,    
+          caption = paste0("Compact distribution of papers (apps) per mental disorder\n", 
+                            "'NA' is app not specified/available")) %>%
+    kable_styling(bootstrap_options = c("hover", "condensed", "responsive")) %>%
+    add_header_above(c(" ", "References by app" = 2, "Psychological framework" = 4)) %>%
+    column_spec(1, bold = T) %>%
+    collapse_rows(columns = 1:2, valign = "top")
+  
+
+```
+
+\newpage
+
 ### Figure 5: Bubble plot representing technology-related dimensions (software features - orange; built-in sensors - green; analytics - blue) versus mental disorders. Bubble size corresponds with amount of articles.
 
 It is a _bubble plot_ that shows the distribution of papers per mental disorder (bubble size) and technology-related characteristics grouped by dimensions (bubble color): software features, built-in sensors, and analytics. Technology-related characteristics are ranked in each dimension.
