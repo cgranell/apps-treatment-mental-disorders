@@ -37,7 +37,7 @@ library(kableExtra)
 library(scales)
 library(DT)
 library(knitr)
-#slibrary(RColorBrewer)
+#library(RColorBrewer)
 
 ```
 
@@ -308,7 +308,7 @@ data_tbl_assesstype %>%
            `RCT - N (%)` = n_lbl.rct,
            `PILOT RCT - N (%)` = n_lbl.pilot) %>%
     knitr::kable(format="html", escape = T, booktabs = TRUE,    
-          caption = "Distribution of assessment type") %>%
+          caption = "Distribution of assessment type. Percentages refer to the total number of studies.") %>%
     kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
     column_spec(1, bold = T)
 
