@@ -269,9 +269,12 @@ data_tbl_assesstype %>%
            `RCT - N (%)` = n_lbl.rct,
            `PILOT RCT - N (%)` = n_lbl.pilot) %>%
     knitr::kable(format="html", escape = T, booktabs = TRUE,    
-          caption = "Distribution of assessment type.") %>%
+          caption = "Distribution of assessment types.") %>%
     kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
-    row_spec(2, bold = T, color = "white", background = "#D7261E") %>%
+    row_spec(1, bold = T, color = "white", background = default_palette[["NO ASSESSMENT"]]) %>%
+    row_spec(3, bold = T, color = "black", background = default_palette[["USABILITY/UX"]]) %>%
+    row_spec(4, bold = T, color = "black", background = default_palette[["EFFECT AND USABILITY/UX"]]) %>%
+    row_spec(5, bold = T, color = "white", background = default_palette[["EFFECT"]]) %>%
     add_indent(3:5) %>%
     column_spec(1, bold = T)
 
