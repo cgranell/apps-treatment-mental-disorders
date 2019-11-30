@@ -516,7 +516,7 @@ _NOTE_: In respond to the comment **F.2** 'Breakdown of treatment modalities' to
 ```{r tab_apps, echo=FALSE}
 data_all_apps <- 
   all_data %>%
-  select(app_name, md_desc, year, id, fmw_cbt, fmw_wav, fmw_pos, fmw_tra) %>%
+  select(app_name, md_desc, year, id, fmw_cbt, fmw_wav, fmw_pos, fmw_tra, fmw_other, fmw_nk) %>%
   # select(app_name, md_desc, year, id, fmw_cbt, fmw_wav, fmw_pos, fmw_tra, ux_gui, ux_gesture, ux_voice, ux_text) %>%
   # filter(!is.na(app_name)) %>%
   # group_by(app_name, md_desc, year) %>%
@@ -538,11 +538,11 @@ sketch <-
       th(rowspan = 2, 'APP NAME'),
       th(rowspan = 2, 'YEAR'),
       th(rowspan = 2, 'ID'),
-      th(colspan = 4, 'PSY FRAMEWORK')
+      th(colspan = 6, 'PSY FRAMEWORK')
       # th(colspan = 3, 'UX')
     ),
     tr(
-      lapply(c('CBT', 'WAV', 'TRA', 'POS'), th)
+      lapply(c('CBT', 'WAV', 'TRA', 'POS', 'OTHER', 'NotK'), th)
       # lapply(c('GES', 'VOI', 'TXT'), th)
     )
   )
@@ -557,7 +557,9 @@ data_all_apps %>%
          `CBT` = fmw_cbt,
          `WAV` = fmw_wav,
          `TRA` = fmw_tra,
-         `POS` = fmw_pos) %>%
+         `POS` = fmw_pos,
+         `OTHER` = fmw_other,
+         `NotK` = fmw_nk) %>%
          # `GES` = ux_gesture,
          # `VOI` = ux_voice,
          # `TXT` = ux_text) %>%
@@ -577,7 +579,12 @@ data_all_apps %>%
     formatStyle('TRA',
       backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', 'lightgray'))) %>%
     formatStyle('POS',
+      backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', 'lightgray'))) %>%
+    formatStyle('OTHER',
+      backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', 'lightgray'))) %>%
+    formatStyle('NotK',
       backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', 'lightgray')))
+
     # formatStyle('GUI',
     #   backgroundColor = styleEqual(c("YES", "NO"), c('lightgreen', ''))) %>%
     # formatStyle('GES',
