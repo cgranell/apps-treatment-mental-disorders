@@ -76,7 +76,8 @@ n_papers = nrow(all_data)
 assessment_type <- c("NO ASSESSMENT", "USABILITY/UX", "EFFECT AND USABILITY/UX", "EFFECT")
 assessment_type_n <- sapply(assessment_type, FUN = function(x) {nrow(filter(all_data, val_type == x))})
 
-n_assessment_yes <- n_papers - assessment_type_n[[1]] 
+n_assessment_no <- assessment_type_n[[1]]
+n_assessment_yes <- n_papers - n_assessment_no 
 
 # Keep the same order of mental disorder for all charts 
 temp_for_order <- 
@@ -117,11 +118,11 @@ default_palette <- c("NO ASSESSMENT"="#AF8DC3", "USABILITY/UX"="#D9F0D3", "EFFEC
 
 The final number of surveyed papers is `r n_papers`. For each paper, we have extracted `r ncol(all_data)` items. Each item is described in the methods section of the paper.
 
-About `r percent(n_assessment_yes/n_papers)` (N=`r n_assessment_yes`) of papers reported some kind of assessment, whereas `r percent(assessment_type_n[[1]]/n_papers)` (N=`r assessment_type_n[[1]]`) reported no assessment at all. Looking closer at the type of assessment: `r percent(assessment_type_n[[4]]/n_papers)` (N=`r assessment_type_n[[4]]`) focus on the effect of intervention on clinical symptomology; `r percent(assessment_type_n[[3]]/n_papers)` (N=`r assessment_type_n[[3]]`) report a mix of effect and usability / UX assessment; `r percent(assessment_type_n[[2]]/n_papers)` (N=`r assessment_type_n[[2]]`) focus solely on usability / UX.
+About `r percent(n_assessment_yes/n_papers)` (N=`r n_assessment_yes`) of papers reported some kind of assessment, whereas `r percent(n_assessment_no/n_papers)` (N=`r n_assessment_no[[1]]`) reported no assessment at all. Looking closer at the type of assessment: `r percent(assessment_type_n[[4]]/n_papers)` (N=`r assessment_type_n[[4]]`) focus on the effect of intervention on clinical symptomology; `r percent(assessment_type_n[[3]]/n_papers)` (N=`r assessment_type_n[[3]]`) report a mix of effect and usability / UX assessment; `r percent(assessment_type_n[[2]]/n_papers)` (N=`r assessment_type_n[[2]]`) focus solely on usability / UX.
 
 \newpage
 
-## Figures and tables
+## Figures and tables (in main body of the paper)
 
 ### Figure 2: Temporal trend of the number of articles published and assessment type.
 
@@ -208,71 +209,23 @@ cowplot::ggsave2(plot = plot_tempdist, filename = plot_tempdist_file_name, devic
 
 \newpage
 
-### NEW TABLE: Key variables (sample, experimental conditions, resutls, etc) of 'RCT' or 'pilot RCT' studies only. 
-
-_NOTE_: In response to the comment **G.26** 'Characteristics of included studies'.
-
-```{r tab_rct, echo=FALSE}
-data_tbl_rct <- 
-    all_data %>%
-    select(id, year, app_name, md_desc, val_edrct, val_n, val_ec, val_res, val_n2) %>%
-    filter(val_edrct %in% c("RCT", "PILOT RCT")) %>%
-    arrange(year, id)
-
-# Table output with {kable}
-# data_tbl_rct %>%
-#     select(`ID` = id,
-#            `Year` = year,
-#            `App name` = app_name,
-#            `MD` = md_desc,
-#            `Study type` = val_edrct,
-#            `Sample (N)` = val_n,
-#            `Exp conditions` = val_ec,
-#            `Results` = val_res,
-#            `Sample (Comments)` = val_n2) %>%
-#     knitr::kable(format="html", escape = T, booktabs = TRUE,
-#           caption = "RCT table") %>%
-#     kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
-#     column_spec(1, bold = T)
-
-
-# Table output using {datatable}
-data_tbl_rct %>%
-    select(`ID` = id,
-           `Year` = year,
-           `App name` = app_name,
-           `MD` = md_desc,
-           `Study type` = val_edrct,
-           `Sample (N)` = val_n,
-           `Exp conditions` = val_ec,
-           `Results` = val_res,
-           `Sample (Comments)` = val_n2) %>%
-    datatable(rownames = FALSE, 
-            filter = "top",
-            class = "table-bordered table-condensed hover",
-            extensions = c("Buttons"),
-            options = list(
-               pageLength = 5, #autoWidth = TRUE,
-               dom = 'Blfrtip',  # https://datatables.net/reference/option/dom
-               buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
-            ))  %>%
-      formatStyle('ID',  fontWeight = 'bold')
-
-
-```
-
-### NEW TABLE: Evolution of assessment types 
+### [NEW] Table 1: Distribution of assessment types.
 
 _NOTE_: In response to the comment **G.18** "The authors may consider presenting the data in the 'Evolution of research and assessment' paragraph using a table instead".  The following table simplifies the last paragragh of the section 'Evolution of research and assessment'.
 
-```{r tab_assessmenttypes, echo=FALSE}
+```{r tab1_assessmenttypes, echo=FALSE}
+
+n_papers_rct <- 25  #FIXME
+n_papers_pilot <- 7
 
 data_tbl_assess <- 
     all_data %>%
     select(val_type) %>%
     group_by(val_type) %>%
     summarise(n = n()) %>%
-    mutate(n_lbl = paste0(n, " (", round(n/n_papers*100,1), "%)"))
+    mutate(n_lbl = if_else(val_type == "NO ASSESSMENT", 
+                           paste0(n, " (", round(n/n_papers*100,1), "%)"),
+                           paste0(n, " (", round(n/n_assessment_yes*100,1), "%)")))
 
 data_tbl_rct <- 
     all_data %>%
@@ -280,7 +233,7 @@ data_tbl_rct <-
     filter(val_edrct == "RCT") %>%
     group_by(val_type, val_edrct) %>%
     summarise(n = n()) %>%
-    mutate(n_lbl = paste0(n, " (", round(n/n_papers*100,1), "%)"))
+    mutate(n_lbl = paste0(n, " (", round(n/n_papers_rct*100,1), "%)"))
 
 
 data_tbl_pilotrct <- 
@@ -289,7 +242,7 @@ data_tbl_pilotrct <-
     filter(val_edrct == "PILOT RCT") %>%
     group_by(val_type, val_edrct) %>%
     summarise(n = n()) %>%
-    mutate(n_lbl = paste0(n, " (", round(n/n_papers*100,1), "%)"))
+    mutate(n_lbl = paste0(n, " (", round(n/n_papers_pilot*100,1), "%)"))
 
 data_tbl_assesstype <-
   data_tbl_assess %>%
@@ -299,17 +252,27 @@ data_tbl_assesstype <-
 
 data_tbl_assesstype$val_type <- forcats::fct_relevel(data_tbl_assesstype$val_type, assessment_type) 
 
+data_tbl_assesstype <- 
+  data_tbl_assesstype %>% 
+  arrange(val_type) %>%
+  add_row(.after = 1, 
+          val_type="ASSESSMENT (total)", 
+          n_lbl=paste0(n_assessment_yes, " (", round(n_assessment_yes/n_papers*100,1), "%)"), 
+          n_lbl.rct=paste0(n_papers_rct, " (", round(n_papers_rct/n_assessment_yes*100,1), "%)"),
+          n_lbl.pilot=paste0(n_papers_pilot, " (", round(n_papers_pilot/n_assessment_yes*100,1), "%)"))
+
 # Table output with Kable
 options(knitr.kable.NA = '0 (0%)')
 data_tbl_assesstype %>%
-    arrange(val_type) %>%
     select(`Assessment type` = val_type,
            `N (%)` = n_lbl,
            `RCT - N (%)` = n_lbl.rct,
            `PILOT RCT - N (%)` = n_lbl.pilot) %>%
     knitr::kable(format="html", escape = T, booktabs = TRUE,    
-          caption = "Distribution of assessment type. Percentages refer to the total number of studies.") %>%
+          caption = "Distribution of assessment type.") %>%
     kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+    row_spec(2, bold = T, color = "white", background = "#D7261E") %>%
+    add_indent(3:5) %>%
     column_spec(1, bold = T)
 
 
@@ -333,8 +296,9 @@ data_tbl_assesstype %>%
 #       formatStyle('Assessment type',  fontWeight = 'bold')
 ```
 
-
 \newpage
+
+
 
 ### Figure 3: Distribution of articles per mental disorder, categorized according to assessment type. The embedded pie chart shows the proportional distribution of types of assessment over all mental disorders.
 
@@ -1094,3 +1058,65 @@ cowplot::ggsave2(plot = kp_bubblechart, filename = kp_file_name, device = "png",
 
 
 ```
+
+
+\newpage
+
+## Figures and tables (in supplementary material)
+
+
+### [NEW] TABLE: Key variables (sample, experimental conditions, resutls, etc) of 'RCT' or 'pilot RCT' studies only. 
+
+_NOTE_: In response to the comment **G.26** 'Characteristics of included studies'.
+
+```{r tab_rct, echo=FALSE}
+data_tbl_rct <- 
+    all_data %>%
+    select(id, year, app_name, md_desc, val_edrct, val_n, val_ec, val_res, val_n2) %>%
+    filter(val_edrct %in% c("RCT", "PILOT RCT")) %>%
+    arrange(year, id)
+
+# Table output with {kable}
+# data_tbl_rct %>%
+#     select(`ID` = id,
+#            `Year` = year,
+#            `App name` = app_name,
+#            `MD` = md_desc,
+#            `Study type` = val_edrct,
+#            `Sample (N)` = val_n,
+#            `Exp conditions` = val_ec,
+#            `Results` = val_res,
+#            `Sample (Comments)` = val_n2) %>%
+#     knitr::kable(format="html", escape = T, booktabs = TRUE,
+#           caption = "RCT table") %>%
+#     kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+#     column_spec(1, bold = T)
+
+
+# Table output using {datatable}
+data_tbl_rct %>%
+    select(`ID` = id,
+           `Year` = year,
+           `App name` = app_name,
+           `MD` = md_desc,
+           `Study type` = val_edrct,
+           `Sample (N)` = val_n,
+           `Exp conditions` = val_ec,
+           `Results` = val_res,
+           `Sample (Comments)` = val_n2) %>%
+    datatable(rownames = FALSE, 
+            filter = "top",
+            class = "table-bordered table-condensed hover",
+            extensions = c("Buttons"),
+            options = list(
+               pageLength = 5, #autoWidth = TRUE,
+               dom = 'Blfrtip',  # https://datatables.net/reference/option/dom
+               buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+            ))  %>%
+      formatStyle('ID',  fontWeight = 'bold')
+
+
+```
+
+
+\newpage
