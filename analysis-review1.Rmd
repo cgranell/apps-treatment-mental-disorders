@@ -124,6 +124,107 @@ About `r percent(n_assessment_yes/n_papers)` (N=`r n_assessment_yes`) of papers 
 
 ## Figures and tables (in main body of the paper)
 
+
+### [NEW] Table 1: Distribution of assessment types.
+
+_NOTE_: In response to the comment **G.18** "The authors may consider presenting the data in the 'Evolution of research and assessment' paragraph using a table instead".  The following table simplifies the last paragragh of the section 'Evolution of research and assessment'.
+
+```{r tab1_assessmenttypes, echo=FALSE}
+data_tbl_assess <- 
+    all_data %>%
+    select(val_type) %>%
+    group_by(val_type) %>%
+    summarise(n = n()) %>%
+    mutate(n_lbl = if_else(val_type == "NO ASSESSMENT", 
+                           paste0(n, " (", round(n/n_papers*100,1), "%)*"),
+                           paste0(n, " (", round(n/n_assessment_yes*100,1), "%)†")))
+
+data_tbl_rct <- 
+    all_data %>%
+    select(val_type, val_edrct) %>%
+    filter(val_edrct == "RCT") %>%
+    group_by(val_type, val_edrct) %>%
+    summarise(n = n()) %>%
+    ungroup() %>%
+    mutate(n_papers_rct = sum(n),
+           n_lbl = paste0(n, " (", round(n/n_papers_rct*100,1), "%)‡"))
+
+n_papers_rct <- data_tbl_rct$n_papers_rct[1] 
+  
+data_tbl_pilotrct <- 
+    all_data %>%
+    select(val_type, val_edrct) %>%
+    filter(val_edrct == "PILOT RCT") %>%
+    group_by(val_type, val_edrct) %>%
+    summarise(n = n()) %>%
+    ungroup() %>%
+    mutate(n_papers_pilot = sum(n),
+           n_lbl = paste0(n, " (", round(n/n_papers_pilot*100,1), "%)‡"))
+
+n_papers_pilot <-  data_tbl_pilotrct$n_papers_pilot[1]
+
+data_tbl_assesstype <-
+  data_tbl_assess %>%
+  full_join(data_tbl_rct, by="val_type", suffix=c("",".rct")) %>%
+  full_join(data_tbl_pilotrct, by="val_type", suffix=c("",".pilot")) %>%
+  select(-n, -val_edrct, -n.rct, -val_edrct.pilot, -n.pilot)
+
+data_tbl_assesstype$val_type <- forcats::fct_relevel(data_tbl_assesstype$val_type, assessment_type) 
+
+# Aggregate the sum of the theee types of assessment 
+data_tbl_assesstype <- 
+  data_tbl_assesstype %>% 
+  arrange(val_type) %>%
+  add_row(.after = 1, 
+          val_type="ASSESSMENT (total)", 
+          n_lbl=paste0(n_assessment_yes, " (", round(n_assessment_yes/n_papers*100,1), "%)*"), 
+          n_lbl.rct=paste0(n_papers_rct, " (", round(n_papers_rct/n_assessment_yes*100,1), "%)†"),
+          n_lbl.pilot=paste0(n_papers_pilot, " (", round(n_papers_pilot/n_assessment_yes*100,1), "%)†"))
+
+# Table output with Kable
+options(knitr.kable.NA = '0 (0%)')
+data_tbl_assesstype %>%
+    select(`Assessment type` = val_type,
+           `N (%)` = n_lbl,
+           `RCT - N (%)` = n_lbl.rct,
+           `PILOT RCT - N (%)` = n_lbl.pilot) %>%
+    knitr::kable(format="html", escape = T, booktabs = TRUE,    
+          caption = "Distribution of assessment types.") %>%
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+    row_spec(1, bold = T, color = "white", background = default_palette[["NO ASSESSMENT"]]) %>%
+    row_spec(3, bold = T, color = "black", background = default_palette[["USABILITY/UX"]]) %>%
+    row_spec(4, bold = T, color = "black", background = default_palette[["EFFECT AND USABILITY/UX"]]) %>%
+    row_spec(5, bold = T, color = "white", background = default_palette[["EFFECT"]]) %>%
+    add_indent(3:5) %>%
+    column_spec(1, bold = T) %>%
+    footnote(symbol = 
+               c("Percentage based on the total number of studies", 
+                 "Percentage based on the number of studies with an assessment",
+                 "Percentage based on number of (Pilot) RCT studies"))
+
+
+# Table output with DT
+# data_tbl_assesstype %>%
+#     arrange(val_type) %>%
+#     select(`Assessment type` = val_type,
+#            `N (%)` = n_lbl,
+#            `RCT - N (%)` = n_lbl.rct,
+#            `PILOT RCT - N (%)` = n_lbl.pilot) %>%
+#     datatable(rownames = FALSE, 
+#             filter = "top",
+#             class = "table-bordered table-condensed hover",
+#             extensions = c("Buttons"),
+#             options = list(
+#                pageLength = 5, #autoWidth = TRUE,
+#                dom = 'Blfrtip',  # https://datatables.net/reference/option/dom
+#                buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+#             ))  %>%
+#       formatStyle('Assessment type',  fontWeight = 'bold')
+```
+
+\newpage
+
+
 ### Figure 2: Temporal trend of the number of articles published and assessment type.
 
 It combines two plots. The top one is a _stacked bar chart_ over years, and the value of each group (assessment type) is in absolute counts. The bottom one is a _proportional stacked area chart_ in which the sum of each year is always equal to hundred, and the value of each group (assessment type) is in percentages.
@@ -205,103 +306,6 @@ plot_tempdist_file_name <- "fig2_tempdist.png"
 
 cowplot::ggsave2(plot = plot_tempdist, filename = plot_tempdist_file_name, device = "png", path = here::here("figs"), scale = 1, width = 20, height = 28, units = "cm", dpi = 600)
 
-```
-
-\newpage
-
-### [NEW] Table 1: Distribution of assessment types.
-
-_NOTE_: In response to the comment **G.18** "The authors may consider presenting the data in the 'Evolution of research and assessment' paragraph using a table instead".  The following table simplifies the last paragragh of the section 'Evolution of research and assessment'.
-
-```{r tab1_assessmenttypes, echo=FALSE}
-
-data_tbl_assess <- 
-    all_data %>%
-    select(val_type) %>%
-    group_by(val_type) %>%
-    summarise(n = n()) %>%
-    mutate(n_lbl = if_else(val_type == "NO ASSESSMENT", 
-                           paste0(n, " (", round(n/n_papers*100,1), "%)"),
-                           paste0(n, " (", round(n/n_assessment_yes*100,1), "%)")))
-
-data_tbl_rct <- 
-    all_data %>%
-    select(val_type, val_edrct) %>%
-    filter(val_edrct == "RCT") %>%
-    group_by(val_type, val_edrct) %>%
-    summarise(n = n()) %>%
-    ungroup() %>%
-    mutate(n_papers_rct = sum(n),
-           n_lbl = paste0(n, " (", round(n/n_papers_rct*100,1), "%)"))
-
-n_papers_rct <- data_tbl_rct$n_papers_rct[1] 
-  
-data_tbl_pilotrct <- 
-    all_data %>%
-    select(val_type, val_edrct) %>%
-    filter(val_edrct == "PILOT RCT") %>%
-    group_by(val_type, val_edrct) %>%
-    summarise(n = n()) %>%
-    ungroup() %>%
-    mutate(n_papers_pilot = sum(n),
-           n_lbl = paste0(n, " (", round(n/n_papers_pilot*100,1), "%)"))
-
-n_papers_pilot <-  data_tbl_pilotrct$n_papers_pilot[1]
-
-data_tbl_assesstype <-
-  data_tbl_assess %>%
-  full_join(data_tbl_rct, by="val_type", suffix=c("",".rct")) %>%
-  full_join(data_tbl_pilotrct, by="val_type", suffix=c("",".pilot")) %>%
-  select(-n, -val_edrct, -n.rct, -val_edrct.pilot, -n.pilot)
-
-data_tbl_assesstype$val_type <- forcats::fct_relevel(data_tbl_assesstype$val_type, assessment_type) 
-
-# Aggregate the sum of the theee types of assessment 
-data_tbl_assesstype <- 
-  data_tbl_assesstype %>% 
-  arrange(val_type) %>%
-  add_row(.after = 1, 
-          val_type="ASSESSMENT (total)", 
-          n_lbl=paste0(n_assessment_yes, " (", round(n_assessment_yes/n_papers*100,1), "%)"), 
-          n_lbl.rct=paste0(n_papers_rct, " (", round(n_papers_rct/n_assessment_yes*100,1), "%)"),
-          n_lbl.pilot=paste0(n_papers_pilot, " (", round(n_papers_pilot/n_assessment_yes*100,1), "%)"))
-
-# Table output with Kable
-options(knitr.kable.NA = '0 (0%)')
-data_tbl_assesstype %>%
-    select(`Assessment type` = val_type,
-           `N (%)` = n_lbl,
-           `RCT - N (%)` = n_lbl.rct,
-           `PILOT RCT - N (%)` = n_lbl.pilot) %>%
-    knitr::kable(format="html", escape = T, booktabs = TRUE,    
-          caption = "Distribution of assessment types.") %>%
-    kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
-    row_spec(1, bold = T, color = "white", background = default_palette[["NO ASSESSMENT"]]) %>%
-    row_spec(3, bold = T, color = "black", background = default_palette[["USABILITY/UX"]]) %>%
-    row_spec(4, bold = T, color = "black", background = default_palette[["EFFECT AND USABILITY/UX"]]) %>%
-    row_spec(5, bold = T, color = "white", background = default_palette[["EFFECT"]]) %>%
-    add_indent(3:5) %>%
-    column_spec(1, bold = T)
-
-
-
-# Table output with DT
-# data_tbl_assesstype %>%
-#     arrange(val_type) %>%
-#     select(`Assessment type` = val_type,
-#            `N (%)` = n_lbl,
-#            `RCT - N (%)` = n_lbl.rct,
-#            `PILOT RCT - N (%)` = n_lbl.pilot) %>%
-#     datatable(rownames = FALSE, 
-#             filter = "top",
-#             class = "table-bordered table-condensed hover",
-#             extensions = c("Buttons"),
-#             options = list(
-#                pageLength = 5, #autoWidth = TRUE,
-#                dom = 'Blfrtip',  # https://datatables.net/reference/option/dom
-#                buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
-#             ))  %>%
-#       formatStyle('Assessment type',  fontWeight = 'bold')
 ```
 
 \newpage
