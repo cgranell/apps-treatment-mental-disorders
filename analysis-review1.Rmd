@@ -215,9 +215,6 @@ _NOTE_: In response to the comment **G.18** "The authors may consider presenting
 
 ```{r tab1_assessmenttypes, echo=FALSE}
 
-n_papers_rct <- 25  #FIXME
-n_papers_pilot <- 7
-
 data_tbl_assess <- 
     all_data %>%
     select(val_type) %>%
@@ -233,16 +230,23 @@ data_tbl_rct <-
     filter(val_edrct == "RCT") %>%
     group_by(val_type, val_edrct) %>%
     summarise(n = n()) %>%
-    mutate(n_lbl = paste0(n, " (", round(n/n_papers_rct*100,1), "%)"))
+    ungroup() %>%
+    mutate(n_papers_rct = sum(n),
+           n_lbl = paste0(n, " (", round(n/n_papers_rct*100,1), "%)"))
 
-
+n_papers_rct <- data_tbl_rct$n_papers_rct[1] 
+  
 data_tbl_pilotrct <- 
     all_data %>%
     select(val_type, val_edrct) %>%
     filter(val_edrct == "PILOT RCT") %>%
     group_by(val_type, val_edrct) %>%
     summarise(n = n()) %>%
-    mutate(n_lbl = paste0(n, " (", round(n/n_papers_pilot*100,1), "%)"))
+    ungroup() %>%
+    mutate(n_papers_pilot = sum(n),
+           n_lbl = paste0(n, " (", round(n/n_papers_pilot*100,1), "%)"))
+
+n_papers_pilot <-  data_tbl_pilotrct$n_papers_pilot[1]
 
 data_tbl_assesstype <-
   data_tbl_assess %>%
@@ -252,6 +256,7 @@ data_tbl_assesstype <-
 
 data_tbl_assesstype$val_type <- forcats::fct_relevel(data_tbl_assesstype$val_type, assessment_type) 
 
+# Aggregate the sum of the theee types of assessment 
 data_tbl_assesstype <- 
   data_tbl_assesstype %>% 
   arrange(val_type) %>%
@@ -300,7 +305,6 @@ data_tbl_assesstype %>%
 ```
 
 \newpage
-
 
 
 ### Figure 3: Distribution of articles per mental disorder, categorized according to assessment type. The embedded pie chart shows the proportional distribution of types of assessment over all mental disorders.
@@ -475,7 +479,253 @@ data_plot_barchart %>%
 \newpage
 
 
-### NEW TABLE. Breakdown of treatment modalities
+### Figure 4: Distribution of articles published for the top 6 mental disorders over time.
+
+A _line chart_ to show the number of papers per mental disorder and year. 
+
+
+```{r fig4_linechart, echo=FALSE, dpi=600, fig.width=12, fig.height=14, fig.asp=0.65}
+
+n_top <- 6
+md_top <- md_all_ordered[1:n_top]
+md_top_lbls <- md_lbl_production[1:n_top] 
+  
+data_plot_topmd <- 
+    all_data %>%
+      filter(md_desc %in% md_top) %>%
+      group_by(md_desc, year) %>%
+      summarise(number_cases = n()) %>%
+      ungroup() %>%
+      mutate(md_desc = factor(md_desc)) %>%
+      arrange(desc(number_cases))
+
+#' Add mental disorders with zero cases
+for (y in 2013:2018) {
+    md_year <- filter(data_plot_topmd, year==y) %>% select(md_desc)
+    md_dif <- setdiff(md_top, md_year$md_desc)
+    if (length(md_dif) > 0) {
+        for (md in md_dif) {
+            data_plot_topmd <- add_row(data_plot_topmd, md_desc=md, year=y, number_cases=0)
+        }
+    }
+}
+
+
+data_plot_topmd$md_desc <- forcats::fct_relevel(data_plot_topmd$md_desc, md_top)
+brks <- levels(data_plot_topmd$md_desc) 
+
+
+plot_topmd <-
+    data_plot_topmd %>%
+        ggplot(aes(x=year, y=number_cases, group=md_desc)) +
+        # geom_vline(aes(xintercept = 2017), color="lightgray", linetype = "dashed", size = 0.5) +
+        # annotate("rect", xmin = 2017, xmax = 2018, ymin = -Inf, ymax = +Inf, fill = "lightgray", alpha = 0.2) +
+        geom_line(aes(color=md_desc), size=2.5, alpha=.4) +
+        geom_point(shape=21, size=7, color="darkgray", fill="white") +
+        labs(#title="Distribution top mental disorders per year", 
+             #subtitle = paste0("Top mental disorders (", top_lbl,")"),
+             x="Year", 
+             y="# of papers", 
+             caption="Source: authors") + 
+        scale_color_brewer(name="Mental disorders", palette="Set2", breaks=brks) + # labels=md_top_lbls
+        geom_text(aes(label = number_cases), color= "black", size=3) +
+        scale_y_continuous(breaks=seq(0,13,by=1)) +
+        theme_minimal() +
+        # Legend: Top-Left Inside the Plot"
+        theme(legend.justification = c('left', 'top'),
+              legend.position=c(0.05, 0.95),  
+              legend.background = element_rect(color = "darkgray", size = 0.5, linetype ="solid"),
+              legend.key = element_blank()) +
+        theme(panel.grid.major = element_blank()) + 
+        theme(panel.grid.minor = element_blank()) +
+        theme(panel.background = element_blank()) +
+        theme(plot.margin=unit(rep(20, 4), "pt")) +
+        # Change the line type and color of axis lines
+        theme(axis.line = element_line(colour = "darkgray", size = 0.5, linetype = "solid"))
+
+plot_topmd
+plot_file_name <- "fig4_linechart.png"
+cowplot::ggsave2(plot = plot_topmd, filename = plot_file_name, device = "png", path = here::here("figs"),
+    scale = 1, width = 20, height = 18, units = "cm", dpi = 600) 
+
+```
+
+
+\newpage
+
+
+### Table 2: Mental disorders and the studies targeting them: NA = app name not available/not mentioned.
+
+A tabular, compact distribution of apps per mental disorder, grouping the references tha point the same app together. The number(s) in brackets next to the app name is the reference(s) in which the app is mentioned. In the table below, these references are internal identifiers instead. 
+
+
+```{r tab2, echo=FALSE}
+
+unite_paper_ids <- function(mentaldisorder, appname) {
+    if (!is.na(appname)) {
+        all_data %>% 
+            filter(md_desc == mentaldisorder & app_name==appname) %>%
+            arrange(year) %>%
+            select(id) %>%
+            as_vector() %>%
+            stringr::str_c(collapse = ";")    
+    } else {
+         all_data %>% 
+            filter(md_desc == mentaldisorder & is.na(app_name)) %>%
+            arrange(year) %>%
+            select(id) %>%
+            as_vector() %>%
+            stringr::str_c(collapse = ";")  
+    }
+}
+
+data_kp_apps <- 
+    all_data %>%
+    group_by(md_desc, app_name) %>%
+    summarise(number_apps = n()) %>% 
+    arrange(number_apps, md_desc)
+
+data_kp_apps <- 
+    data_kp_apps %>%
+    add_column(ids = purrr::map2(data_kp_apps$md_desc, data_kp_apps$app_name, unite_paper_ids))
+
+data_kp_apps <- 
+    data_kp_apps %>%
+    add_column(app_ids = paste0(data_kp_apps$app_name, " (", data_kp_apps$ids, ")"))
+
+data_kp_apps <- 
+    data_kp_apps %>%
+    group_by(md_desc) %>%
+    summarise(app_ids_merge = paste0(app_ids, collapse = ", ")) 
+
+data_kp_apps$md_desc <- forcats::fct_relevel(data_kp_apps$md_desc, md_all_ordered)
+
+
+# Table output with Kable 
+# options(knitr.kable.NA = '-')
+data_kp_apps %>%
+    arrange(desc(md_desc)) %>%
+    select(`Mental Disorder` = md_desc,
+           `References by app` = app_ids_merge) %>%
+    knitr::kable(format="html", escape = T, booktabs = TRUE,    
+          caption = paste0("Compact distribution of papers (apps) per mental disorder\n", 
+                            "'NA' is app not specified/available")) %>%
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+    column_spec(1, bold = T) %>%
+    collapse_rows(columns = 1, valign = "top") 
+
+
+# Table output with DT 
+# data_kp_apps %>%
+#     arrange(desc(md_desc)) %>%
+#     select(`Mental Disorder` = md_desc,
+#            `References by app` = app_ids_merge) %>%
+#   datatable(rownames = FALSE, 
+#             filter = "top",
+#             class = "table-bordered table-condensed hover",
+#             extensions = "Buttons",
+#             options = list(
+#                pageLength = 5, #autoWidth = TRUE,
+#                dom = 'Blfrtip',  # https://datatables.net/reference/option/dom
+#                buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+#             )) %>%
+#       formatStyle('Mental Disorder',  fontWeight = 'bold')
+      
+
+```
+
+
+\newpage
+
+To complement the previous table some percentages are discussed in the section 'Assessment types in research studies', as part of the Discussion,  which are included here for reference. 
+
+_NOTE_: In respond to the comment **A.14** 'Percentage of apps having been studied in multiple articles'
+
+```{r tab_apps_in_many_papers, echo=FALSE}
+
+data_all_apps <- 
+  all_data %>%
+  select(app_name, md_desc, year, id) %>%
+  filter(!is.na(app_name)) %>%
+  arrange(md_desc, year)
+
+data_apps_in_papers <- 
+  all_data %>%
+  select(app_name, md_desc, year, id) %>%
+  filter(!is.na(app_name)) %>%
+  group_by(app_name, md_desc) %>%
+  summarise(number_apps = n()) %>% 
+  arrange(md_desc, app_name)
+
+apps_in_multiple_papers <-
+  data_apps_in_papers %>%
+  filter(number_apps > 1) %>%
+  arrange(md_desc, app_name)
+
+apps_in_2_papers <- nrow(filter(data_apps_in_papers, number_apps == 2))
+
+app_in_multiple_md <-
+  data_apps_in_papers %>% 
+  filter(app_name %in% c("FOCUS", "iBobbly", "SmartCAT")) %>%
+  arrange(app_name, md_desc)
+
+```
+
+Out of N=`r n_papers`, there are `r nrow(data_all_apps)` studies with app names. However, there are `r nrow(data_apps_in_papers)` unique apps. The unique apps follow a long tail distribution, since `r nrow(data_apps_in_papers) - nrow(apps_in_multiple_papers)` appear only once, while `r nrow(apps_in_multiple_papers)` apps appear in two or more studies, being two studies the most frequent case (`r apps_in_2_papers`) and apps in 3 or more studies occurs in only `r nrow(apps_in_multiple_papers) - apps_in_2_papers` cases. In summary, the percentage of apps having been studied in multiple articles is `r nrow(data_apps_in_papers)` / `r nrow(apps_in_multiple_papers)` **(`r percent(nrow(apps_in_multiple_papers)/nrow(data_all_apps))`)**. 
+
+Note also that **`r length(unique(app_in_multiple_md$app_name))` apps are classified in two categories of mental disorders**.
+
+```{r echo=FALSE}
+head(app_in_multiple_md)
+```
+
+
+\newpage
+
+
+
+### [NEW] Alternative to TABLE 2. 
+
+_NOTE_: In response to the comment **G.26** 'Characteristics of included studies'. It adds psychological framework data per study to the table 2. In production (manual formating), the table can get more compact, all "NO" can be deleted (empty cell instead), and "YES" can be substituted by coloring the cell depending on the psychological approach, as in the example I provided.
+
+```{r tab1bis, echo=FALSE}
+data_kp_apps <- 
+    all_data %>%
+    select(md_desc, app_name, id, fmw_cbt, fmw_wav, fmw_tra, fmw_pos) %>%
+  
+    # group_by(md_desc, app_name) %>%
+    # summarise(number_apps = n()) %>% 
+    arrange(md_desc, app_name)
+
+
+data_kp_apps$md_desc <- forcats::fct_relevel(data_kp_apps$md_desc, md_all_ordered)
+
+options(knitr.kable.NA = 'NA')
+data_kp_apps %>%
+    arrange(desc(md_desc)) %>%
+    select(`Mental Disorder` = md_desc,
+           `App name` = app_name, 
+           `Ref` = id,  
+           `CBT` = fmw_cbt, 
+           `WAV` = fmw_wav, 
+           `TRA` = fmw_tra, 
+           `POS` = fmw_pos) %>%
+    knitr::kable(format="html", escape = T, booktabs = TRUE,    
+          caption = paste0("Compact distribution of papers (apps) per mental disorder\n", 
+                            "'NA' is app not specified/available")) %>%
+    kable_styling(bootstrap_options = c("hover", "condensed", "responsive")) %>%
+    add_header_above(c(" ", "References by app" = 2, "Psychological framework" = 4)) %>%
+    column_spec(1, bold = T) %>%
+    collapse_rows(columns = 1:2, valign = "top")
+  
+
+```
+
+\newpage
+
+### [NEW] Alternative to TABLE 2. 
+
+A new, separate table 'Breakdown of treatment modalities'. If so, it will most likely go into the Supplementary materials.
 
 _NOTE_: In respond to the comment **F.2** 'Breakdown of treatment modalities' to show psychological framework per study (ALL)
 
@@ -565,250 +815,6 @@ data_all_apps %>%
 
 ```
 
-
-\newpage
-
-
-### NEW DATA: Apps in multiple papers/studies
-
-_NOTE_: In respond to the comment **A.14** 'Percentage of apps having been studied in multiple articles'
-
-```{r tab_apps_in_many_papers, echo=FALSE}
-
-data_all_apps <- 
-  all_data %>%
-  select(app_name, md_desc, year, id) %>%
-  filter(!is.na(app_name)) %>%
-  arrange(md_desc, year)
-
-data_apps_in_papers <- 
-  all_data %>%
-  select(app_name, md_desc, year, id) %>%
-  filter(!is.na(app_name)) %>%
-  group_by(app_name, md_desc) %>%
-  summarise(number_apps = n()) %>% 
-  arrange(md_desc, app_name)
-
-apps_in_multiple_papers <-
-  data_apps_in_papers %>%
-  filter(number_apps > 1) %>%
-  arrange(md_desc, app_name)
-
-apps_in_2_papers <- nrow(filter(data_apps_in_papers, number_apps == 2))
-
-app_in_multiple_md <-
-  data_apps_in_papers %>% 
-  filter(app_name %in% c("FOCUS", "iBobbly", "SmartCAT")) %>%
-  arrange(app_name, md_desc)
-
-```
-
-Out of N=`r n_papers`, there are `r nrow(data_all_apps)` studies with app names. However, there are `r nrow(data_apps_in_papers)` unique apps. The unique apps follow a long tail distribution, since `r nrow(data_apps_in_papers) - nrow(apps_in_multiple_papers)` appear only once, while `r nrow(apps_in_multiple_papers)` apps appear in two or more studies, being two studies the most frequent case (`r apps_in_2_papers`) and apps in 3 or more studies occurs in only `r nrow(apps_in_multiple_papers) - apps_in_2_papers` cases. In summary, the percentage of apps having been studied in multiple articles is `r nrow(data_apps_in_papers)` / `r nrow(apps_in_multiple_papers)` **(`r percent(nrow(apps_in_multiple_papers)/nrow(data_all_apps))`)**. 
-
-Note also that **`r length(unique(app_in_multiple_md$app_name))` apps are classified in two categories of mental disorders**.
-
-```{r echo=FALSE}
-head(app_in_multiple_md)
-```
-
-
-\newpage
-
-### Figure 4: Distribution of articles published for the top 6 mental disorders over time.
-
-A _line chart_ to show the number of papers per mental disorder and year. 
-
-
-```{r fig4_linechart, echo=FALSE, dpi=600, fig.width=12, fig.height=14, fig.asp=0.65}
-
-n_top <- 6
-md_top <- md_all_ordered[1:n_top]
-md_top_lbls <- md_lbl_production[1:n_top] 
-  
-data_plot_topmd <- 
-    all_data %>%
-      filter(md_desc %in% md_top) %>%
-      group_by(md_desc, year) %>%
-      summarise(number_cases = n()) %>%
-      ungroup() %>%
-      mutate(md_desc = factor(md_desc)) %>%
-      arrange(desc(number_cases))
-
-#' Add mental disorders with zero cases
-for (y in 2013:2018) {
-    md_year <- filter(data_plot_topmd, year==y) %>% select(md_desc)
-    md_dif <- setdiff(md_top, md_year$md_desc)
-    if (length(md_dif) > 0) {
-        for (md in md_dif) {
-            data_plot_topmd <- add_row(data_plot_topmd, md_desc=md, year=y, number_cases=0)
-        }
-    }
-}
-
-
-data_plot_topmd$md_desc <- forcats::fct_relevel(data_plot_topmd$md_desc, md_top)
-brks <- levels(data_plot_topmd$md_desc) 
-
-
-plot_topmd <-
-    data_plot_topmd %>%
-        ggplot(aes(x=year, y=number_cases, group=md_desc)) +
-        # geom_vline(aes(xintercept = 2017), color="lightgray", linetype = "dashed", size = 0.5) +
-        # annotate("rect", xmin = 2017, xmax = 2018, ymin = -Inf, ymax = +Inf, fill = "lightgray", alpha = 0.2) +
-        geom_line(aes(color=md_desc), size=2.5, alpha=.4) +
-        geom_point(shape=21, size=7, color="darkgray", fill="white") +
-        labs(#title="Distribution top mental disorders per year", 
-             #subtitle = paste0("Top mental disorders (", top_lbl,")"),
-             x="Year", 
-             y="# of papers", 
-             caption="Source: authors") + 
-        scale_color_brewer(name="Mental disorders", palette="Set2", breaks=brks) + # labels=md_top_lbls
-        geom_text(aes(label = number_cases), color= "black", size=3) +
-        scale_y_continuous(breaks=seq(0,13,by=1)) +
-        theme_minimal() +
-        # Legend: Top-Left Inside the Plot"
-        theme(legend.justification = c('left', 'top'),
-              legend.position=c(0.05, 0.95),  
-              legend.background = element_rect(color = "darkgray", size = 0.5, linetype ="solid"),
-              legend.key = element_blank()) +
-        theme(panel.grid.major = element_blank()) + 
-        theme(panel.grid.minor = element_blank()) +
-        theme(panel.background = element_blank()) +
-        theme(plot.margin=unit(rep(20, 4), "pt")) +
-        # Change the line type and color of axis lines
-        theme(axis.line = element_line(colour = "darkgray", size = 0.5, linetype = "solid"))
-
-plot_topmd
-plot_file_name <- "fig4_linechart.png"
-cowplot::ggsave2(plot = plot_topmd, filename = plot_file_name, device = "png", path = here::here("figs"),
-    scale = 1, width = 20, height = 18, units = "cm", dpi = 600) 
-
-```
-
-
-\newpage
-
-
-### Table 1: Mental disorders and the studies targeting them: NA = app name not available/not mentioned.
-
-A tabular, compact distribution of apps per mental disorder, grouping the references tha point the same app together. The number(s) in brackets next to the app name is the reference(s) in which the app is mentioned. In the table below, these references are internal identifiers instead. 
-
-
-```{r tab1, echo=FALSE}
-
-unite_paper_ids <- function(mentaldisorder, appname) {
-    if (!is.na(appname)) {
-        all_data %>% 
-            filter(md_desc == mentaldisorder & app_name==appname) %>%
-            arrange(year) %>%
-            select(id) %>%
-            as_vector() %>%
-            stringr::str_c(collapse = ";")    
-    } else {
-         all_data %>% 
-            filter(md_desc == mentaldisorder & is.na(app_name)) %>%
-            arrange(year) %>%
-            select(id) %>%
-            as_vector() %>%
-            stringr::str_c(collapse = ";")  
-    }
-}
-
-data_kp_apps <- 
-    all_data %>%
-    group_by(md_desc, app_name) %>%
-    summarise(number_apps = n()) %>% 
-    arrange(number_apps, md_desc)
-
-data_kp_apps <- 
-    data_kp_apps %>%
-    add_column(ids = purrr::map2(data_kp_apps$md_desc, data_kp_apps$app_name, unite_paper_ids))
-
-data_kp_apps <- 
-    data_kp_apps %>%
-    add_column(app_ids = paste0(data_kp_apps$app_name, " (", data_kp_apps$ids, ")"))
-
-data_kp_apps <- 
-    data_kp_apps %>%
-    group_by(md_desc) %>%
-    summarise(app_ids_merge = paste0(app_ids, collapse = ", ")) 
-
-data_kp_apps$md_desc <- forcats::fct_relevel(data_kp_apps$md_desc, md_all_ordered)
-
-
-# Table output with Kable 
-# options(knitr.kable.NA = '-')
-data_kp_apps %>%
-    arrange(desc(md_desc)) %>%
-    select(`Mental Disorder` = md_desc,
-           `References by app` = app_ids_merge) %>%
-    knitr::kable(format="html", escape = T, booktabs = TRUE,    
-          caption = paste0("Compact distribution of papers (apps) per mental disorder\n", 
-                            "'NA' is app not specified/available")) %>%
-    kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
-    column_spec(1, bold = T) %>%
-    collapse_rows(columns = 1, valign = "top") 
-
-
-# Table output with DT 
-# data_kp_apps %>%
-#     arrange(desc(md_desc)) %>%
-#     select(`Mental Disorder` = md_desc,
-#            `References by app` = app_ids_merge) %>%
-#   datatable(rownames = FALSE, 
-#             filter = "top",
-#             class = "table-bordered table-condensed hover",
-#             extensions = "Buttons",
-#             options = list(
-#                pageLength = 5, #autoWidth = TRUE,
-#                dom = 'Blfrtip',  # https://datatables.net/reference/option/dom
-#                buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
-#             )) %>%
-#       formatStyle('Mental Disorder',  fontWeight = 'bold')
-      
-
-```
-
-
-\newpage
-
-
-### NEW TABLE: Alternative to TABLE 1. 
-
-_NOTE_: In response to the comment **G.26** 'Characteristics of included studies'. It adds psychological framework data per study to the big table. In production (manual formating), the table can get more compact, all "NO" can be deleted (empty cell instead), and "YES" can be substituted by coloring the cell depending on the psychological approach, as in the example I provided.
-
-```{r tab1bis, echo=FALSE}
-data_kp_apps <- 
-    all_data %>%
-    select(md_desc, app_name, id, fmw_cbt, fmw_wav, fmw_tra, fmw_pos) %>%
-  
-    # group_by(md_desc, app_name) %>%
-    # summarise(number_apps = n()) %>% 
-    arrange(md_desc, app_name)
-
-
-data_kp_apps$md_desc <- forcats::fct_relevel(data_kp_apps$md_desc, md_all_ordered)
-
-options(knitr.kable.NA = 'NA')
-data_kp_apps %>%
-    arrange(desc(md_desc)) %>%
-    select(`Mental Disorder` = md_desc,
-           `App name` = app_name, 
-           `Ref` = id,  
-           `CBT` = fmw_cbt, 
-           `WAV` = fmw_wav, 
-           `TRA` = fmw_tra, 
-           `POS` = fmw_pos) %>%
-    knitr::kable(format="html", escape = T, booktabs = TRUE,    
-          caption = paste0("Compact distribution of papers (apps) per mental disorder\n", 
-                            "'NA' is app not specified/available")) %>%
-    kable_styling(bootstrap_options = c("hover", "condensed", "responsive")) %>%
-    add_header_above(c(" ", "References by app" = 2, "Psychological framework" = 4)) %>%
-    column_spec(1, bold = T) %>%
-    collapse_rows(columns = 1:2, valign = "top")
-  
-
-```
 
 \newpage
 
@@ -954,7 +960,7 @@ levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_hcp"] <- "Hea
 levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_use"] <- "In-Situ Use"
 levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_soc"] <- "Social"
 levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_ca"] <- "Context-Awareness"
-levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_game"] <- "Game"
+levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_game"] <- "Gamification"
 levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_vr"] <- "Virtual Reality"
 levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="feat_ar"] <- "Augmented Reality"
 
@@ -969,8 +975,9 @@ levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="anal_act"] <- "Act
 levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="anal_beh"] <- "Behavioral Analysis"
 levels(data_kp_all$tech_type)[levels(data_kp_all$tech_type)=="anal_sp"] <- "Spatial Analysis"
 
-cols_ordered <-  c("Learning", "Progress", "Personalization", "Assessment", "Prompting", "Health Care Provider \nCommunication", 
-                   "In-Situ Use", "Social", "Context-Awareness", "Game",  "Virtual Reality", "Augmented Reality", 
+cols_ordered <-  c("Learning", "Progress", "Personalization", "Assessment", "Prompting", 
+                   "Health Care Provider \nCommunication", "In-Situ Use", "Social", "Gamification",
+                   "Context-Awareness",  "Virtual Reality", "Augmented Reality", 
                    "Microphone", "GPS", "Camera", "Accelerometer", "Gyroscope",  
                    "Machine Learning", "Activity Analysis", "Behavioral Analysis", "Spatial Analysis") 
 dims_ordered <- c("Software features", "Built-In sensors", "Analytics")
@@ -992,7 +999,7 @@ brks <- levels(factor(data_kp_all$cat))
 # Color per dimension: 
 # Software features "#FC8D62"; Built-In sensors "#66C2A5"; Types of analyses "#8DA0CB"
 lbls_colors <- 
-    ifelse(unique(data_kp_all$tech_type) %in% c("Learning", "Progress", "Personalization", "Assessment", "Prompting", "Health Care Provider \nCommunication", "In-Situ Use", "Social", "Context-Awareness", "Game",  "Virtual Reality", "Augmented Reality"), "#FC8D62",
+    ifelse(unique(data_kp_all$tech_type) %in% c("Learning", "Progress", "Personalization", "Assessment", "Prompting", "Health Care Provider \nCommunication", "In-Situ Use", "Social", "Context-Awareness", "Gamification",  "Virtual Reality", "Augmented Reality"), "#FC8D62",
            ifelse(unique(data_kp_all$tech_type) %in% c("Microphone", "GPS", "Camera", "Accelerometer", "Gyroscope"), "#66C2A5",
            "#8DA0CB"))
                
@@ -1048,9 +1055,9 @@ for (i in 1:nrow(data_kp_all_n)) {
 # Add rectangles to highlight group of bubbles
 kp_bubblechart <-
     kp_bubblechart +
-    annotate("rect", xmin = 0.5, xmax = 11.5, ymin = 0.5, ymax = 7.5, 
+    annotate("rect", xmin = 0.5, xmax = 12.5, ymin = 0.5, ymax = 7.5,
              color = "gray", fill = "lightgray", alpha = 0.2, linetype="dashed") +
-    annotate("rect", xmin = 0.5, xmax = 5.5, ymin = 0.5, ymax = 9.5, 
+    annotate("rect", xmin = 0.5, xmax = 6.5, ymin = 0.5, ymax = 9.5, 
              color = "gray", fill = "lightgray", alpha = 0.2)
 
 kp_bubblechart
