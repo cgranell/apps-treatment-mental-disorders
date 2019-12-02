@@ -9,20 +9,6 @@ output:
 urlcolor: blue    
 ---
 
-## License
-
-This document is licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/).
-
-The code is licensed under the [Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/).
-
-The data used is licensed under a [Open Data Commons Attribution License](https://opendatacommons.org/licenses/by/).
-
-\newpage
-
-
-## Metadata
-
-Required libraries and runtime environment description.
 
 ```{r load_libraries, echo=FALSE, message=FALSE, warning=FALSE}
 library(here)
@@ -35,12 +21,9 @@ library(scales)
 library(knitr)
 ```
 
+## About
 
-```{r session_info, echo=FALSE}
-devtools::session_info(include_base = TRUE)
-```
-
-This document is versioned in a public [git](https://git-scm.com/) repo: [https://github.com/cgranell/apps-treatment-mental-disorders](https://github.com/cgranell/apps-treatment-mental-disorders). This R notebook, `analysis.Rmd`, contains the code to produce the final figures and tables of the following [pre-print paper](https://preprints.jmir.org/preprint/14897). 
+This computational essay is versioned in a public [git](https://git-scm.com/) repo: [https://github.com/cgranell/apps-treatment-mental-disorders](https://github.com/cgranell/apps-treatment-mental-disorders). This R Markdown file, `analysis.Rmd`, contains the code to produce the final figures and tables of the following [paper in JMIR Preprints](https://preprints.jmir.org/preprint/14897). 
 
 > Miralles I, Granell C, Díaz-Sanahuja L, Van Woensel W, Bretón-López J, Mira A, Castilla D, Casteleyn S
 > Smartphone apps for the treatment of mental disorders: a systematic review.
@@ -85,9 +68,7 @@ md_all_ordered <- levels(temp_for_order$md_desc)
 default_palette <- c("NO ASSESSMENT"="#AF8DC3", "USABILITY/UX"="#D9F0D3", "EFFECT AND USABILITY/UX"="#7FBF7B", "EFFECT"="#1B7837")
 ```
 
-The final number of surveyed papers is `r n_papers`. For each paper, we have extracted `r ncol(all_data)` items. Each item is described in the methods section of the paper.
-
-About `r percent(n_assessment_yes/n_papers)` (N=`r n_assessment_yes`) of papers reported some kind of assessment, whereas `r percent(n_assessment_no/n_papers)` (N=`r n_assessment_no`) reported no assessment at all. Looking closer at the type of assessment: `r percent(n_assessment_effect/n_papers)` (N=`r n_assessment_effect`) focus on the effect of intervention on clinical symptomology; `r percent(n_assessment_effectux/n_papers)` (N=`r n_assessment_effectux`) report a mix of effect and usability / UX assessment; `r percent(n_assessment_ux/n_papers)` (N=`r n_assessment_ux`) focus solely on usability / UX.
+The final number of surveyed papers is `r n_papers`. For each paper, we have extracted `r ncol(all_data)` items. Each item is described in the methods section of the [paper](https://preprints.jmir.org/preprint/14897). About `r percent(n_assessment_yes/n_papers)` (N=`r n_assessment_yes`) of papers reported some kind of assessment, whereas `r percent(n_assessment_no/n_papers)` (N=`r n_assessment_no`) reported no assessment at all. Looking closer at the type of assessment: `r percent(n_assessment_effect/n_papers)` (N=`r n_assessment_effect`) focus on the effect of intervention on clinical symptomology; `r percent(n_assessment_effectux/n_papers)` (N=`r n_assessment_effectux`) report a mix of effect and usability / UX assessment; `r percent(n_assessment_ux/n_papers)` (N=`r n_assessment_ux`) focus solely on usability / UX.
 
 \newpage
 
@@ -726,4 +707,20 @@ cowplot::ggsave2(plot = kp_bubblechart, filename = kp_file_name, device = "png",
                  width = 40, height = 25, units = "cm", dpi = 600)
 
 
+```
+\newpage
+
+## License
+
+This document is licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/).
+
+The code is licensed under the [Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/).
+
+The data used is licensed under a [Open Data Commons Attribution License](https://opendatacommons.org/licenses/by/).
+
+
+## Runtime environment description
+
+```{r session_info, echo=FALSE}
+devtools::session_info(include_base = TRUE)
 ```
