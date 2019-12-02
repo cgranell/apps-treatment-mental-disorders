@@ -1,6 +1,0 @@
-install.packages("here")
-install.packages("cowplot")
-install.packages("kableExtra")
-install.packages("forcats")
-install.packages("purrr")
-install.packages("scales")

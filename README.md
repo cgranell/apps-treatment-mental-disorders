@@ -1,6 +1,12 @@
 # Smartphone apps for the treatment of mental disorders: Data, analysis and computational environment
 
-R Markdown notebook for the paper "Smartphone apps for the treatment of mental disorders: a systematic review"
+R Markdown notebook for the paper ["Smartphone apps for the treatment of mental disorders: a systematic review"](https://preprints.jmir.org/preprint/14897)
+
+> Miralles I, Granell C, Díaz-Sanahuja L, Van Woensel W, Bretón-López J, Mira A, Castilla D, Casteleyn S.
+> Smartphone apps for the treatment of mental disorders: a systematic review.
+> JMIR Preprints. 03/06/2019:14897
+> DOI: 10.2196/preprints.14897
+
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2682244.svg)](https://doi.org/10.5281/zenodo.2682244)
 
