@@ -1,0 +1,194 @@
+"","id","md","md_id","md_desc","val_asstype","sens_acc","sens_gyr","sens_gps","sens_mic","sens_cam","feat_use","feat_promp","feat_soc","feat_hcp","feat_learn","feat_prog","feat_ca","feat_ass","feat_vr","feat_ar","feat_pers","feat_game","anal_ml","anal_beh","anal_act","anal_sp","app_name","year"
+"1","007","10-Feeding and eating disorders","10","Feeding and eating disorders","USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","YES","NO","YES","YES","YES","YES","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","Student Bodies–Eating Disorders (SB-ED)",2016
+"2","012","25-Suicidal behavior disorder/
+nonsuicidal self-injury","25","Suicidal behavior disorder/
+nonsuicidal self-injury","USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","YES","NOT KNOWN","NO","YES","YES","NOT KNOWN","NO","NOT KNOWN","NO","NO","YES","NO","NO","NO","NO","NO",NA,2017
+"3","013","16-Substance-related and
+ addictive disorders","16","Substance-related and
+ addictive disorders","EFFECT AND USABILITY/USER EXPERIENCE","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","YES","NOT KNOWN","YES","YES","NOT KNOWN","YES","NOT KNOWN","NOT KNOWN","NOT KNOWN","YES","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","A-CHESS",2015
+"4","014","16-Substance-related and
+ addictive disorders","16","Substance-related and
+ addictive disorders","NO ASSESSMENT","NO","NO","NO","NO","NO","NOT KNOWN","YES","NO","YES","YES","NOT KNOWN","NO","NOT KNOWN","NO","NO","YES","NO","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","CET Application",2016
+"5","015","7-Trauma and
+ stressor-related disorders","7","Trauma and
+ stressor-related disorders","EFFECT","NO","NO","NO","NO","NO","NO","YES","NOT KNOWN","YES","YES","YES","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","PTSD Coach",2017
+"6","020","4-Depressive disorders","4","Depressive disorders","EFFECT","NO","NO","NO","NO","NO","NOT KNOWN","YES","YES","NOT KNOWN","NOT KNOWN","YES","NO","NOT KNOWN","NO","NO","NOT KNOWN","NO","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","TODAC TODAC",2018
+"7","021","16-Substance-related and
+ addictive disorders","16","Substance-related and
+ addictive disorders","NO ASSESSMENT","NO","NO","NO","NO","NO","YES","YES","NO","YES","YES","NOT KNOWN","NO","NOT KNOWN","NO","NO","YES","NO","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","CET Application",2017
+"8","022","25-Suicidal behavior disorder/
+nonsuicidal self-injury","25","Suicidal behavior disorder/
+nonsuicidal self-injury","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","YES","YES","NO","YES","YES","NO","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","Blue Ice",2018
+"9","023","4-Depressive disorders","4","Depressive disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","YES","NO","NO","NO","NOT KNOWN","NO","NO","YES","NO","YES","YES","NO","NO","NO","NO","YES","NO","NO","NOT KNOWN",NA,2015
+"10","025","5-Anxiety disorders","5","Anxiety disorders","NO ASSESSMENT","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","YES","NOT KNOWN","NOT KNOWN","YES","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","Lantern",2018
+"11","026","25-Suicidal behavior disorder/
+nonsuicidal self-injury","25","Suicidal behavior disorder/
+nonsuicidal self-injury","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","YES","NOT KNOWN","NOT KNOWN","YES","YES","NOT KNOWN","NO","NOT KNOWN","NOT KNOWN","NOT KNOWN","YES","YES","NO","NO","NO","NO","Virtual Hope Box (VHB)",2017
+"12","027","5-Anxiety disorders","5","Anxiety disorders","NO ASSESSMENT","YES","NO","NO","NO","NO","NOT KNOWN","YES","NO","NOT KNOWN","NOT KNOWN","YES","NO","YES","NO","NO","NO","NO","YES","NO","YES","NO",NA,2015
+"13","029","24-Various disorders","24","Various disorders","USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","YES","NOT KNOWN","NO","YES","YES","NOT KNOWN","NO","NOT KNOWN","NO","NO","NO","NOT KNOWN","NO","NO","NO","NO","iBobbly",2016
+"14","030","25-Suicidal behavior disorder/
+nonsuicidal self-injury","25","Suicidal behavior disorder/
+nonsuicidal self-injury","USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","YES","YES","NO","YES","YES","NO","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","Blue Ice",2018
+"15","034","24-Various disorders","24","Various disorders","USABILITY/USER EXPERIENCE","YES","NO","NO","NO","NO","NOT KNOWN","NOT KNOWN","YES","NOT KNOWN","YES","YES","NO","YES","NO","NO","NO","NO","NO","NO","NO","NO","Wellframe",2017
+"16","035","4-Depressive disorders","4","Depressive disorders","NO ASSESSMENT","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","YES","NOT KNOWN","NOT KNOWN","NOT KNOWN","YES","YES","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","Kokoro-App",2015
+"17","037","7-Trauma and
+ stressor-related disorders","7","Trauma and
+ stressor-related disorders","EFFECT","NO","NO","YES","YES","YES","YES","NOT KNOWN","YES","YES","YES","YES","YES","YES","NO","YES","YES","YES","NO","NO","NO","NO","Life Armor; PE Coach; Positive Activity Jackpot; Eventful; Tactical Breather; Virtual Hope Box; Daily Yoga; Simply Yoga",2017
+"18","038","16-Substance-related and
+ addictive disorders","16","Substance-related and
+ addictive disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","YES","YES","NO","YES","NOT KNOWN","YES","NO","YES","NO","NO","NO","NO","NO","NO","NO","NO","Smart-T",2016
+"19","039","16-Substance-related and
+ addictive disorders","16","Substance-related and
+ addictive disorders","EFFECT","NO","NO","NO","NO","NO","NO","YES","NO","YES","NOT KNOWN","YES","NO","YES","NO","NO","NO","NO","NO","NO","NO","NO","Smart-T",2018
+"20","042","3-Bipolar and related disorders","3","Bipolar and related disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","YES","NO","NO","NOT KNOWN","NOT KNOWN","NO","YES","NO","NO","YES","NO","NOT KNOWN","NO","NO","NO","MyT",2016
+"21","044","6-Obsessive-Compulsive and
+ related disorders","6","Obsessive-Compulsive and
+ related disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NOT KNOWN","NOT KNOWN","NO","NOT KNOWN","YES","YES","NO","YES","NO","NO","NO","YES","NO","NO","NO","NO","Live OCD Free",2017
+"22","048","3-Bipolar and related disorders","3","Bipolar and related disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","YES","NOT KNOWN","NO","NOT KNOWN","NOT KNOWN","NO","YES","NO","NO","NOT KNOWN","NO","NO","NO","NO","NO","PRISM",2015
+"23","049","7-Trauma and
+ stressor-related disorders","7","Trauma and
+ stressor-related disorders","USABILITY/USER EXPERIENCE","NO","NO","NO","YES","NO","NO","NOT KNOWN","NO","NO","YES","YES","NO","NOT KNOWN","NO","NO","YES","NO","NO","NO","NO","NO","PE Coach",2017
+"24","050","5-Anxiety disorders","5","Anxiety disorders","EFFECT","NO","YES","NO","NO","NO","NO","NO","NO","NO","NO","NOT KNOWN","NO","NOT KNOWN","YES","NO","YES","NO","NO","NO","NO","NO","Public Speech Trainer (PST)",2017
+"25","051","4-Depressive disorders","4","Depressive disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","NOT KNOWN","YES","NO","NOT KNOWN","YES","NO","YES","NO","NO","NO","NO","NO","NO","NO","NO",NA,2014
+"26","056","6-Obsessive-Compulsive and
+ related disorders","6","Obsessive-Compulsive and
+ related disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","NOT KNOWN","NO","NO","YES","YES","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","Mayo Clinic Anxiety Coach",2014
+"27","057","5-Anxiety disorders","5","Anxiety disorders","NO ASSESSMENT","NO","NO","NO","NO","NO","NO","YES","NO","NO","YES","YES","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","CBT Assistant",2014
+"28","058","4-Depressive disorders","4","Depressive disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NOT KNOWN","NO","NO","NOT KNOWN","YES","NOT KNOWN","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","Get Happy Program",2013
+"29","061","7-Trauma and
+ stressor-related disorders","7","Trauma and
+ stressor-related disorders","USABILITY/USER EXPERIENCE","NO","NO","NO","YES","NO","NO","NOT KNOWN","NO","NO","YES","YES","NO","NOT KNOWN","NO","NO","YES","NO","NO","NO","NO","NO","PE Coach",2015
+"30","062","7-Trauma and
+ stressor-related disorders","7","Trauma and
+ stressor-related disorders","USABILITY/USER EXPERIENCE","NO","NO","NO","YES","NO","NO","NOT KNOWN","NO","NO","YES","YES","NO","NOT KNOWN","NO","NO","YES","NO","NO","NO","NO","NO","PE Coach",2014
+"31","063","4-Depressive disorders","4","Depressive disorders","EFFECT AND USABILITY/USER EXPERIENCE","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","YES","YES","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","Kokoro-App",2018
+"32","065","16-Substance-related and
+ addictive disorders","16","Substance-related and
+ addictive disorders","NO ASSESSMENT","NO","NO","NO","NO","NO","NOT KNOWN","NOT KNOWN","YES","NOT KNOWN","YES","YES","NO","YES","NO","NO","NOT KNOWN","NO","YES","NO","NO","NO","Smoke Mind",2016
+"33","069","7-Trauma and
+ stressor-related disorders","7","Trauma and
+ stressor-related disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","YES","NO","NO","NOT KNOWN","NO","NO","YES","YES","NO","NOT KNOWN","NO","NO","YES","NO","NO","NO","NO","NO","PE Coach",2015
+"34","071","4-Depressive disorders","4","Depressive disorders","USABILITY/USER EXPERIENCE","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","YES","NOT KNOWN","NOT KNOWN","NOT KNOWN","YES","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN",NA,2016
+"35","077","4-Depressive disorders","4","Depressive disorders","NO ASSESSMENT","NO","NO","NO","NOT KNOWN","NO","YES","NOT KNOWN","NO","YES","YES","NOT KNOWN","NO","NOT KNOWN","NO","NO","YES","NOT KNOWN","NO","NO","NO","NO",NA,2017
+"36","082","4-Depressive disorders","4","Depressive disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","NOT KNOWN","YES","NO","YES","YES","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","7Cups",2018
+"37","086","23-Comorbid disorders","23","Comorbid disorders","NO ASSESSMENT","NO","NO","NO","NO","NO","NO","YES","NO","NO","NOT KNOWN","YES","NO","NO","NO","NO","YES","NO","NO","NO","NO","NO",NA,2015
+"38","087","2-Schizophrenia spectrum and
+ other psychotic disorders","2","Schizophrenia spectrum and
+ other psychotic disorders","USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","YES","YES","NO","YES","NO","YES","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","Heal Your Mind",2017
+"39","088","7-Trauma and
+ stressor-related disorders","7","Trauma and
+ stressor-related disorders","USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","YES","NOT KNOWN","YES","YES","YES","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","PTSD Coach",2017
+"40","089","2-Schizophrenia spectrum and
+ other psychotic disorders","2","Schizophrenia spectrum and
+ other psychotic disorders","USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","NOT KNOWN","NO","NO","NO","NOT KNOWN","NO","YES","NO","NO","NO","NO","NO","NO","NO","NO","FOCUS",2013
+"41","090","2-Schizophrenia spectrum and
+ other psychotic disorders","2","Schizophrenia spectrum and
+ other psychotic disorders","USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","NO","NO","NO","YES","YES","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","iCOPE",2017
+"42","091","5-Anxiety disorders","5","Anxiety disorders","NO ASSESSMENT","NO","NO","NO","NO","YES","NO","NO","NO","NO","NOT KNOWN","YES","NO","NO","NO","NO","YES","NO","NO","NO","NO","NO","GET.ON PAPP",2013
+"43","092","10-Feeding and eating disorders","10","Feeding and eating disorders","USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NOT KNOWN","YES","YES","YES","YES","YES","YES","NO","NOT KNOWN","NO","NO","YES","YES","NO","NO","NO","NO","RR: Eating Disorder Management",2015
+"44","094","12-Sleep-wake disorders","12","Sleep-wake disorders","NO ASSESSMENT","NO","NO","NO","NO","NO","NO","NOT KNOWN","NO","NO","YES","NOT KNOWN","NO","NOT KNOWN","NO","NO","NO","NO","NO","NO","NO","NO","SleepIO",2016
+"45","097","23-Comorbid disorders","23","Comorbid disorders","NO ASSESSMENT","NO","NO","NO","NO","NO","NOT KNOWN","YES","YES","YES","NOT KNOWN","YES","NO","YES","NO","NO","NO","NO","NO","NO","NO","NO","Stop-Cannabis",2016
+"46","103","12-Sleep-wake disorders","12","Sleep-wake disorders","NO ASSESSMENT","NO","NO","NO","NO","NO","NO","NOT KNOWN","NO","NO","YES","NOT KNOWN","NO","NOT KNOWN","NO","NO","NO","NO","NO","NO","NO","NO","SleepIO",2017
+"47","105","5-Anxiety disorders","5","Anxiety disorders","NO ASSESSMENT","NO","NO","NO","NO","YES","NO","NO","NO","NO","NOT KNOWN","YES","NO","NO","NO","NO","YES","NO","NO","NO","NO","NO","GET.ON PAPP",2014
+"48","106","18-Personality disorders","18","Personality disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","YES","NO","NO","NO","YES","YES","NO","YES","NO","NO","NO","NO","NO","NO","NO","NO","EMOTEO",2017
+"49","110","24-Various disorders","24","Various disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","YES","NO","NO","YES","NOT KNOWN","NO","YES","NO","NO","NO","NO","NO","NO","NO","NO","ACT Daily APP",2017
+"50","114","4-Depressive disorders","4","Depressive disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","NOT KNOWN","NOT KNOWN","NO","YES","YES","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","Thought Challenger",2017
+"51","115","4-Depressive disorders","4","Depressive disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","YES","NOT KNOWN","NOT KNOWN","NOT KNOWN","NO","NO","NOT KNOWN","NOT KNOWN","NO","NO","NO","NO","SPSRS",2018
+"52","117","2-Schizophrenia spectrum and
+ other psychotic disorders","2","Schizophrenia spectrum and
+ other psychotic disorders","USABILITY/USER EXPERIENCE","NO","NO","NO","YES","YES","YES","NOT KNOWN","YES","YES","NOT KNOWN","YES","NOT KNOWN","NOT KNOWN","NO","NO","YES","NO","NO","NO","NO","NO","PRIME",2016
+"53","118","7-Trauma and
+ stressor-related disorders","7","Trauma and
+ stressor-related disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","YES","NOT KNOWN","YES","YES","YES","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","PTSD Coach",2016
+"54","119","24-Various disorders","24","Various disorders","EFFECT AND USABILITY/USER EXPERIENCE","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","YES","YES","NOT KNOWN","NOT KNOWN","YES","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","PeerTECH App",2017
+"55","120","2-Schizophrenia spectrum and
+ other psychotic disorders","2","Schizophrenia spectrum and
+ other psychotic disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","YES","NO","NO","NO","NOT KNOWN","NO","YES","NO","NO","NO","NO","NO","NO","NO","NO","FOCUS",2014
+"56","121","7-Trauma and
+ stressor-related disorders","7","Trauma and
+ stressor-related disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","YES","YES","YES","YES","NOT KNOWN","YES","YES","YES","YES","YES","YES","NO","YES","YES","YES","NO","NO","NO","NO","Life Armor; PE Coach; Positive Activity Jackpot; Eventful; Tactical Breather; Virtual Hope Box; Daily Yoga; Simply Yoga",2015
+"57","122","5-Anxiety disorders","5","Anxiety disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","NOT KNOWN","NO","NO","YES","YES","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","Ångesthjälpen",2016
+"58","123","5-Anxiety disorders","5","Anxiety disorders","NO ASSESSMENT","NO","NO","NO","NO","NO","NO","YES","YES","YES","NOT KNOWN","YES","NO","NO","NO","NO","NO","NO","NOT KNOWN","NO","NO","NO",NA,2013
+"59","124","25-Suicidal behavior disorder/
+nonsuicidal self-injury","25","Suicidal behavior disorder/
+nonsuicidal self-injury","EFFECT","NO","NO","NO","NO","NO","YES","NOT KNOWN","NO","YES","YES","NOT KNOWN","NO","NOT KNOWN","NO","NO","NO","NOT KNOWN","NO","NO","NO","NO","iBobbly",2017
+"60","125","1-Neurodevelopmental disorders","1","Neurodevelopmental disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","YES","YES","NO","NO","YES","NO","YES","NO","NO","NO","NO","NO","YES","NO","NO","NO","NO","NO","iCanLearn",2015
+"61","126","24-Various disorders","24","Various disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","NO","NO","NO","YES","NOT KNOWN","YES","NO","NO","NO","NOT KNOWN","NO","NO","NO","NO","NO","myCompass",2013
+"62","127","16-Substance-related and
+ addictive disorders","16","Substance-related and
+ addictive disorders","EFFECT","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","YES","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","SEVA",2018
+"63","131","24-Various disorders","24","Various disorders","EFFECT","NOT KNOWN","NOT KNOWN","YES","NOT KNOWN","NOT KNOWN","NO","YES","YES","NO","YES","YES","YES","NO","NO","NO","YES","NO","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","IntelliCare Suite",2017
+"64","138","3-Bipolar and related disorders","3","Bipolar and related disorders","EFFECT","NO","NO","NO","NO","NO","NO","YES","NO","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","NO","NO","NO","SIMPLe",2017
+"65","140","24-Various disorders","24","Various disorders","NO ASSESSMENT","NO","NO","NO","NO","NO","YES","YES","NO","YES","YES","YES","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","SPIRIT",2017
+"66","142","1-Neurodevelopmental disorders","1","Neurodevelopmental disorders","USABILITY/USER EXPERIENCE","NO","NO","YES","NO","NO","YES","YES","NO","YES","YES","YES","YES","NO","NO","NO","YES","NO","NO","NO","NO","NO","LifePal",2016
+"67","152","4-Depressive disorders","4","Depressive disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","YES","NO","NO","YES","YES","NO","YES","NO","NO","NO","NO","NO","NO","NO","NO","MedLink",2015
+"68","160","7-Trauma and
+ stressor-related disorders","7","Trauma and
+ stressor-related disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","YES","NOT KNOWN","YES","YES","YES","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","PTSD Coach",2015
+"69","163","5-Anxiety disorders","5","Anxiety disorders","EFFECT AND USABILITY/USER EXPERIENCE","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","YES","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN",NA,2018
+"70","171","16-Substance-related and
+ addictive disorders","16","Substance-related and
+ addictive disorders","EFFECT AND USABILITY/USER EXPERIENCE","YES","NO","NO","NO","NO","NO","YES","NO","NO","YES","NO","YES","NO","NO","NO","YES","NO","NO","NO","NO","NO","Mind the Moment",2017
+"71","177","24-Various disorders","24","Various disorders","USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","NO","YES","NO","YES","YES","NO","NO","NO","NO","NOT KNOWN","NOT KNOWN","NO","NO","NO","NO","Headspace",2017
+"72","181","12-Sleep-wake disorders","12","Sleep-wake disorders","EFFECT","NO","NO","NO","NO","NO","NO","YES","NO","NO","YES","YES","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","Sleepcare",2017
+"73","183","4-Depressive disorders","4","Depressive disorders","EFFECT","YES","NO","YES","NO","YES","NO","NOT KNOWN","NO","NO","YES","YES","YES","YES","NO","NO","YES","YES","YES","YES","YES","YES","Mobile Sensing and Support",2016
+"74","185","24-Various disorders","24","Various disorders","NO ASSESSMENT","NO","NO","YES","YES","NO","NO","YES","NO","NO","YES","NOT KNOWN","YES","YES","NO","NO","NO","NO","YES","NO","NO","NO","MoodTrainer",2017
+"75","187","4-Depressive disorders","4","Depressive disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","NO","NO","NO","YES","YES","NO","NO","NO","NO","YES","NO","NO","NO","NO","NO","MoodHacker",2016
+"76","188","4-Depressive disorders","4","Depressive disorders","NO ASSESSMENT","NO","NO","NO","NO","NO","NO","YES","YES","NO","YES","YES","NO","NO","NO","NO","YES","NOT KNOWN","NO","NO","NO","NO","Moodivate",2017
+"77","192","5-Anxiety disorders","5","Anxiety disorders","NO ASSESSMENT","NO","NO","NO","NO","NO","NO","YES","NO","NO","YES","YES","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","AnxietyCoach",2017
+"78","203","4-Depressive disorders","4","Depressive disorders","NO ASSESSMENT","NO","NO","YES","NO","NO","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","YES","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NOT KNOWN","NO","NO","NO","NO","MyGamePlan",2016
+"79","217","16-Substance-related and
+ addictive disorders","16","Substance-related and
+ addictive disorders","USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","NOT KNOWN","NO","NO","YES","YES","NO","NOT KNOWN","NO","NO","NOT KNOWN","NO","NO","NO","NO","NO","SmartQuit",2015
+"80","220","24-Various disorders","24","Various disorders","NO ASSESSMENT","NO","NO","NO","NO","NO","NO","YES","NO","NO","YES","YES","NO","NO","NO","NO","YES","NOT KNOWN","NO","NO","NO","NO","WorkingWell",2018
+"81","226","3-Bipolar and related disorders","3","Bipolar and related disorders","USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","YES","YES","NO","YES","YES","YES","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","SIMPLe",2016
+"82","231","4-Depressive disorders","4","Depressive disorders","EFFECT","NO","NO","NO","NO","NO","NO","NOT KNOWN","YES","NO","YES","NOT KNOWN","NOT KNOWN","NOT KNOWN","NO","NO","YES","YES","NO","NO","NO","NO","SuperBetter",2015
+"83","232","23-Comorbid disorders","23","Comorbid disorders","USABILITY/USER EXPERIENCE","NO","NO","NO","NO","YES","YES","YES","NO","NO","NO","YES","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","SMI-CM",2018
+"84","235","4-Depressive disorders","4","Depressive disorders","NO ASSESSMENT","NO","NO","NO","NO","NO","NO","NOT KNOWN","NO","YES","YES","YES","NO","YES","NO","NO","NO","NO","NO","NO","NO","NO","Dcombat",2017
+"85","245","25-Suicidal behavior disorder/
+nonsuicidal self-injury","25","Suicidal behavior disorder/
+nonsuicidal self-injury","NO ASSESSMENT","NO","NO","NO","NO","NO","NO","YES","NO","YES","NO","YES","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","Blue Ice",2016
+"86","258","3-Bipolar and related disorders","3","Bipolar and related disorders","USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","YES","NO","YES","YES","YES","NO","YES","NO","NO","NO","NO","NO","NO","NO","NO","SIMPLe",2015
+"87","260","2-Schizophrenia spectrum and
+ other psychotic disorders","2","Schizophrenia spectrum and
+ other psychotic disorders","NO ASSESSMENT","NO","NO","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","NO","NO","NO","YES","NO","NO","NO","NO","NO","SlowMo",2017
+"88","262","6-Obsessive-Compulsive and
+ related disorders","6","Obsessive-Compulsive and
+ related disorders","USABILITY/USER EXPERIENCE","NO","NO","YES","YES","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","YES","NO","NO","NO","NO","NO","Geo-Feedback App",2016
+"89","263","4-Depressive disorders","4","Depressive disorders","EFFECT","NO","NO","NO","NOT KNOWN","NOT KNOWN","NO","NOT KNOWN","NO","NOT KNOWN","YES","YES","NO","YES","NO","NO","NOT KNOWN","NO","NO","NO","NO","NO","Kokoro-App",2017
+"90","265","10-Feeding and eating disorders","10","Feeding and eating disorders","NO ASSESSMENT","NO","NO","NO","NO","NO","NO","YES","NO","YES","NO","NOT KNOWN","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","Jorvie",2017
+"91","266","4-Depressive disorders","4","Depressive disorders","EFFECT","NO","NO","NO","NO","NO","NO","NO","NO","YES","NO","YES","NO","YES","NO","NO","NO","NO","NO","NO","NO","NO",NA,2015
+"92","273","2-Schizophrenia spectrum and
+ other psychotic disorders","2","Schizophrenia spectrum and
+ other psychotic disorders","NO ASSESSMENT","NO","NO","NO","NO","NO","YES","YES","NO","NO","YES","NO","NO","YES","NO","NO","YES","NO","YES","NO","NO","NO","TechCare",2016
+"93","275","25-Suicidal behavior disorder/
+nonsuicidal self-injury","25","Suicidal behavior disorder/
+nonsuicidal self-injury","NO ASSESSMENT","NO","NO","NO","NO","NO","YES","NO","NO","NO","YES","YES","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO",NA,2013
+"94","279","4-Depressive disorders","4","Depressive disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","NO","YES","YES","YES","YES","NO","NO","NO","NO","YES","NO","NO","NO","NO","NO","PRIME-D",2017
+"95","281","24-Various disorders","24","Various disorders","NO ASSESSMENT","NO","NO","YES","NO","NO","NO","NO","YES","NO","NO","YES","YES","YES","NO","NO","YES","NO","NO","NO","NO","NO","The Moment",2014
+"96","282","24-Various disorders","24","Various disorders","USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","YES","YES","NO","YES","YES","NO","YES","YES","NO","NO","YES","NO","NO","NO","NO","NO","SmartCAT",2014
+"97","285","5-Anxiety disorders","5","Anxiety disorders","EFFECT","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO",NA,2016
+"98","286","5-Anxiety disorders","5","Anxiety disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","YES","NO","NO","YES","YES","YES","NO","YES","NO","NO","NO","NO","NO","NO","NO","NO","PsychAssist",2015
+"99","290","23-Comorbid disorders","23","Comorbid disorders","EFFECT","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","Enuresis Trainer",2014
+"100","291","5-Anxiety disorders","5","Anxiety disorders","EFFECT","NO","NO","NO","NO","NO","YES","YES","NO","NO","YES","NO","NO","YES","YES","NO","YES","YES","NO","NO","NO","NO","Agoraphobia Free; Stress Free",2017
+"101","294","24-Various disorders","24","Various disorders","USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","YES","YES","NO","YES","YES","YES","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","TODAY!",2017
+"102","297","23-Comorbid disorders","23","Comorbid disorders","USABILITY/USER EXPERIENCE","NO","NO","YES","YES","NO","NO","YES","YES","YES","YES","NO","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","CASA-CHESS",2017
+"103","300","23-Comorbid disorders","23","Comorbid disorders","USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","YES","NO","YES","YES","NO","NO","YES","NO","NO","YES","YES","NO","NO","NO","NO","Learn To Quit",2018
+"104","301","7-Trauma and
+ stressor-related disorders","7","Trauma and
+ stressor-related disorders","USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","YES","NO","NO","NO","YES","NO","YES","YES","NO","NO","YES","NO","NO","NO","NO","NO","RELAX",2016
+"105","302","7-Trauma and
+ stressor-related disorders","7","Trauma and
+ stressor-related disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO",NA,2017
+"106","303","4-Depressive disorders","4","Depressive disorders","NO ASSESSMENT","NO","NO","NO","NO","NO","NO","YES","NO","YES","YES","YES","NO","YES","NO","NO","YES","YES","NO","NO","NO","NO",NA,2016
+"107","304","1-Neurodevelopmental disorders","1","Neurodevelopmental disorders","NO ASSESSMENT","NO","NO","NO","NO","NO","YES","YES","YES","NO","YES","NO","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","My MFG",2016
+"108","305","2-Schizophrenia spectrum and
+ other psychotic disorders","2","Schizophrenia spectrum and
+ other psychotic disorders","NO ASSESSMENT","NO","NO","NO","NO","NO","NO","YES","NO","NO","YES","YES","NO","YES","NO","NO","YES","NO","NO","NO","NO","NO","Actissist",2015
+"109","306","7-Trauma and
+ stressor-related disorders","7","Trauma and
+ stressor-related disorders","EFFECT AND USABILITY/USER EXPERIENCE","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO",NA,2016
+"110","307","16-Substance-related and
+ addictive disorders","16","Substance-related and
+ addictive disorders","NO ASSESSMENT","NO","NO","NO","NO","NO","NO","YES","YES","NO","YES","NO","NO","NO","NO","NO","NO","YES","NO","NO","NO","NO","A-CHESS",2017
+"111","308","5-Anxiety disorders","5","Anxiety disorders","EFFECT","NO","NO","NO","NO","NO","NO","NO","NO","NO","YES","NO","YES","NO","YES","NO","NO","NO","NO","NO","NO","NO",NA,2013
