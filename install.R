@@ -1,5 +1,6 @@
 install.packages("here")
-install.packages("cowplot")
+# install.packages("cowplot")
+install.packages("https://cran.r-project.org/src/contrib/cowplot_1.0.0.tar.gz")
 install.packages("kableExtra")
 install.packages("forcats")
 install.packages("purrr")
