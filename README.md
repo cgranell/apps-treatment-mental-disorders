@@ -7,8 +7,11 @@ R Markdown notebook for the paper ["Smartphone apps for the treatment of mental 
 > JMIR Preprints. 03/06/2019:14897
 > DOI: 10.2196/preprints.14897
 
+[![](https://img.shields.io/badge/JMIR%20Preprints-http%3A%2F%2Fdoi.org%2F10.2196%2Fpreprints.14897-yellow.svg)](http://doi.org/10.2196/preprints.14897)
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2682244.svg)](https://doi.org/10.5281/zenodo.2682244)
+Archived releases of this repository are available in [Zenodo](https://doi.org/10.5281/zenodo.2682243). 
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2682243.svg)](https://doi.org/10.5281/zenodo.2682243)
 
 ## Reproduce Online
 
